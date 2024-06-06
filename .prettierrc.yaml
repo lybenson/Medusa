@@ -1,4 +1,6 @@
-singleQuote: true
 semi: false
-printWidth: 100
+endOfLine: auto
+singleQuote: true
+jsxSingleQuote: true
 trailingComma: none
+singleAttributePerLine: true
