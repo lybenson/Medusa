@@ -1,19 +1,19 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.webp?asset'
+// import icon from '../../resources/icon.webp?asset'
+
+console.log(is)
 
 function createWindow(): void {
-  console.log(process.platform)
-
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
+    titleBarStyle: 'hiddenInset',
+    frame: false,
     webPreferences: {
+      devTools: is.dev,
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }

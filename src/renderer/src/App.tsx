@@ -1,16 +1,26 @@
-import { Button } from './components/ui/button'
-import { Textarea } from './components/ui/textarea'
+import SplitLayout from './components/layouts/split-layout'
 
 export default function App() {
   console.log('App')
 
   return (
-    <>
-      <div className='w-full min-h-screen flex items-center  flex-col p-2'>
-        <Textarea placeholder='Type you want translate message' />
-
-        <Button variant='default'>submit</Button>
-      </div>
-    </>
+    <div className='flex flex-col h-screen'>
+      <div
+        id='drag-region'
+        className='h-10 border-b w-full'
+        style={
+          {
+            WebkitAppRegion: 'drag',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          } as React.CSSProperties
+        }
+      />
+      <SplitLayout
+        sidebar={<></>}
+        detail={<></>}
+      />
+    </div>
   )
 }
