@@ -30,8 +30,10 @@
     "clsx": "^2.1.1",
     "electron-updater": "6.3.0-alpha.4",
     "framer-motion": "^11.2.10",
+    "lucide-react": "^0.390.0",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",

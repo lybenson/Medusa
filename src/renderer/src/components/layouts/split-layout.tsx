@@ -8,7 +8,7 @@ interface SplitLayoutProps {
 export default function SplitLayout({ sidebar, detail }: SplitLayoutProps) {
   return (
     <div className='flex  flex-1'>
-      <div className='w-1/4 border-r'>{sidebar}</div>
+      <div className='w-1/4 border-r bg-neutral-100'>{sidebar}</div>
       <div className='w-3/4'>{detail}</div>
     </div>
   )

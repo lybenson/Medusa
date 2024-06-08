@@ -1,7 +1,9 @@
-import SplitLayout from './components/layouts/split-layout'
+import Sidebar from './components/sidebar'
+import { routes } from './routes'
+import { usePageStore } from './store'
 
 export default function App() {
-  console.log('App')
+  const currentPath = usePageStore((state) => state.currentPath)
 
   return (
     <div className='flex flex-col h-screen'>
@@ -17,10 +19,16 @@ export default function App() {
           } as React.CSSProperties
         }
       />
-      <SplitLayout
-        sidebar={<></>}
-        detail={<></>}
-      />
+      <div className='flex  flex-1'>
+        <div className='w-60 flex-shrink-0 border-r bg-neutral-100'>
+          <Sidebar />
+        </div>
+        <div className='flex-1'>
+          {routes.map((route) =>
+            route.path === currentPath ? route.component : null
+          )}
+        </div>
+      </div>
     </div>
   )
 }

@@ -10,6 +10,8 @@ function createWindow(): void {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
+    minWidth: 640,
+    minHeight: 480,
     titleBarStyle: 'hiddenInset',
     frame: false,
     webPreferences: {
