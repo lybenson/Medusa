@@ -23,10 +23,12 @@ export default function App() {
         <div className='w-60 flex-shrink-0 border-r bg-neutral-100'>
           <Sidebar />
         </div>
-        <div className='flex-1'>
-          {routes.map((route) =>
-            route.path === currentPath ? route.component : null
-          )}
+        <div className='flex-1 p-2'>
+          {routes.map((route) => (
+            <div key={route.path}>
+              {route.path === currentPath ? route.component : null}
+            </div>
+          ))}
         </div>
       </div>
     </div>
