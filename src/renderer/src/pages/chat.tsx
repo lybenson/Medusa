@@ -1,13 +1,21 @@
 import { Button } from '@renderer/components/ui/button'
 import { Textarea } from '@renderer/components/ui/textarea'
+import { db } from '@renderer/db'
 import { translate } from '@renderer/translate'
-
-import { toast } from 'sonner'
+import { sentense } from '@schema'
+import { useEffect, useState } from 'react'
 
 export default function Chat() {
   const handleSubmit = () => {
     translate('Event has been created.')
   }
+  const [postList, setPosts] = useState([] as any[])
+
+  useEffect(() => {
+    db.query.sentense.findMany().then((result) => {
+      setPosts(result)
+    })
+  }, [])
 
   return (
     <div>
@@ -20,11 +28,19 @@ export default function Chat() {
       </Button>
       <Button
         size='sm'
-        onClick={() => toast.success('Event has been created.')}
+        onClick={async () => {
+          await db.insert(sentense).values({
+            id: Math.floor(Math.random() * 1000),
+            title: 'hello world'
+          })
+        }}
       >
         Add to memorandum
       </Button>
       We are using Node.js <span id='node-version'></span>
+      {postList.map((post) => {
+        return <div key={post.id}>{post.title}</div>
+      })}
     </div>
   )
 }

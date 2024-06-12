@@ -12,7 +12,8 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve(__dirname, './src/renderer/src')
+        '@renderer': resolve(__dirname, './src/renderer/src'),
+        '@schema': resolve(__dirname, './src/db/schema.ts')
       }
     },
     plugins: [react()]

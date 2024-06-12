@@ -5,7 +5,8 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
-    "src/renderer/src/lib"
+    "src/renderer/src/lib",
+    "src/db/**/*"
   ],
   "exclude": ["node_modules"],
   "compilerOptions": {
@@ -13,7 +14,8 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@renderer/*": ["src/renderer/src/*"]
+      "@renderer/*": ["src/renderer/src/*"],
+      "@schema": ["src/db/schema.ts"]
     }
   }
 }
