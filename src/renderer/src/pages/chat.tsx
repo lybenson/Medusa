@@ -1,7 +1,6 @@
 import { Button } from '@renderer/components/ui/button'
 import { Textarea } from '@renderer/components/ui/textarea'
 import { insertSentence } from '@renderer/database/sentence'
-import { insertWord, insertWordWithRelation } from '@renderer/database/word'
 
 import { translate } from '@renderer/translate'
 import { useMutation } from '@tanstack/react-query'
