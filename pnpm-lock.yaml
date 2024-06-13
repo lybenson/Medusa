@@ -26,6 +26,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.0.2
         version: 1.0.2(@types/react@18.3.3)(react@18.3.1)
+      '@tanstack/react-query':
+        specifier: ^5.45.0
+        version: 5.45.0(react@18.3.1)
       better-sqlite3:
         specifier: ^11.0.0
         version: 11.0.0
@@ -1147,6 +1150,14 @@ packages:
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
+
+  '@tanstack/query-core@5.45.0':
+    resolution: {integrity: sha512-RVfIZQmFUTdjhSAAblvueimfngYyfN6HlwaJUPK71PKd7yi43Vs1S/rdimmZedPWX/WGppcq/U1HOj7O7FwYxw==}
+
+  '@tanstack/react-query@5.45.0':
+    resolution: {integrity: sha512-y272cKRJp1BvehrWG4ashOBuqBj1Qm2O6fgYJ9LYSHrLdsCXl74GbSVjUQTReUdHuRIl9cEOoyPa6HYag400lw==}
+    peerDependencies:
+      react: ^18.0.0
 
   '@tootallnate/once@1.1.2':
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
@@ -4203,6 +4214,13 @@ snapshots:
   '@szmarczak/http-timer@4.0.6':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@tanstack/query-core@5.45.0': {}
+
+  '@tanstack/react-query@5.45.0(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-core': 5.45.0
+      react: 18.3.1
 
   '@tootallnate/once@1.1.2':
     optional: true

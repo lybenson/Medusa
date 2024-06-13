@@ -1,21 +1,29 @@
 import { Button } from '@renderer/components/ui/button'
 import { Textarea } from '@renderer/components/ui/textarea'
-import { db } from '@renderer/db'
+import { insertSentence } from '@renderer/database/sentence'
+import { insertWord, insertWordWithRelation } from '@renderer/database/word'
+
 import { translate } from '@renderer/translate'
-import { sentense } from '@schema'
-import { useEffect, useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { Loader } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function Chat() {
   const handleSubmit = () => {
     translate('Event has been created.')
   }
-  const [postList, setPosts] = useState([] as any[])
+  const {
+    mutateAsync: createSentence,
+    isPending: isCreatingSentence,
+    isSuccess: isCreateSentenceSuccess,
+    isError: isCreateSentenceError
+  } = useMutation({
+    mutationKey: ['createSentence'],
+    mutationFn: insertSentence
+  })
 
-  useEffect(() => {
-    db.query.sentense.findMany().then((result) => {
-      setPosts(result)
-    })
-  }, [])
+  isCreateSentenceSuccess && toast.success('添加到备忘录成功')
+  isCreateSentenceError && toast.error('添加到备忘录失败')
 
   return (
     <div>
@@ -24,23 +32,20 @@ export default function Chat() {
         size='sm'
         onClick={handleSubmit}
       >
-        Submit
+        提交
       </Button>
       <Button
         size='sm'
-        onClick={async () => {
-          await db.insert(sentense).values({
-            id: Math.floor(Math.random() * 1000),
-            title: 'hello world'
+        onClick={() =>
+          createSentence({
+            original: 'I am a student 23',
+            translation: '我是一名学生 23'
           })
-        }}
+        }
       >
-        Add to memorandum
+        {isCreatingSentence && <Loader className='mr-2 h-4 w-4 animate-spin' />}
+        添加到备忘录
       </Button>
-      We are using Node.js <span id='node-version'></span>
-      {postList.map((post) => {
-        return <div key={post.id}>{post.title}</div>
-      })}
     </div>
   )
 }
