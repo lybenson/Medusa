@@ -1,3 +1,4 @@
+import AppHeader from './components/app-header'
 import Sidebar from './components/sidebar'
 import { routes } from './routes'
 import { usePageStore } from './store'
@@ -7,18 +8,8 @@ export default function App() {
 
   return (
     <div className='flex flex-col h-screen'>
-      <div
-        id='drag-region'
-        className='h-10 border-b w-full'
-        style={
-          {
-            WebkitAppRegion: 'drag',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          } as React.CSSProperties
-        }
-      />
+      <AppHeader />
+
       <div className='flex  flex-1'>
         <div className='w-60 flex-shrink-0 border-r bg-neutral-100'>
           <Sidebar />

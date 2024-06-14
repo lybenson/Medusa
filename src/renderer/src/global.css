@@ -61,3 +61,11 @@
 body {
   height: 100vh;
 }
+
+[data-drag-region] {
+  -webkit-app-region: drag;
+}
+
+[data-no-drag-region] {
+  -webkit-app-region: no-drag;
+}

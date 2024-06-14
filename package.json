@@ -35,7 +35,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.31.2",
-    "electron-store": "^9.0.0",
+    "electron-store": "^8.2.0",
     "electron-updater": "6.3.0-alpha.4",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.394.0",
