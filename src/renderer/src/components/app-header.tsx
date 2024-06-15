@@ -24,7 +24,10 @@ export default function AppHeader() {
   }
 
   return (
-    <div className='dragable border-b flex flex-col'>
+    <div
+      className='border-b flex flex-col'
+      data-drag-region
+    >
       <div className='flex items-center justify-between h-full'>
         <div />
         <div
@@ -58,7 +61,7 @@ export default function AppHeader() {
           </div>
 
           <DrawerFooter>
-            <Button onClick={handleSave}>Submit</Button>
+            <Button onClick={handleSave}>Save</Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

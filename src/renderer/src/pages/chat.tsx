@@ -1,16 +1,23 @@
 import { Button } from '@renderer/components/ui/button'
 import { Textarea } from '@renderer/components/ui/textarea'
 import { insertSentence } from '@renderer/database/sentence'
-
-import { translate } from '@renderer/translate'
+import { useChatApi } from '@renderer/hooks/useChatApi'
 import { useMutation } from '@tanstack/react-query'
 import { Loader } from 'lucide-react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 export default function Chat() {
-  const handleSubmit = () => {
-    translate('Event has been created.')
+  const [inputValue, setInputValue] = useState(
+    `Used by some of the world's largest companies, Next.js enables you to create high-quality web applications with the power of React components.`
+  )
+
+  const { fetchSSE, data } = useChatApi(inputValue)
+
+  const handleSendMessage = async () => {
+    fetchSSE()
   }
+
   const {
     mutateAsync: createSentence,
     isPending: isCreatingSentence,
@@ -26,10 +33,19 @@ export default function Chat() {
 
   return (
     <div>
-      <Textarea className='min-h-32 mb-4 text-base' />
+      <Textarea
+        className='min-h-32 mb-4 text-base'
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            handleSendMessage()
+          }
+        }}
+      />
       <Button
         size='sm'
-        onClick={handleSubmit}
+        onClick={handleSendMessage}
       >
         提交
       </Button>
@@ -45,6 +61,8 @@ export default function Chat() {
         {isCreatingSentence && <Loader className='mr-2 h-4 w-4 animate-spin' />}
         添加到备忘录
       </Button>
+
+      <div>{data}</div>
     </div>
   )
 }
