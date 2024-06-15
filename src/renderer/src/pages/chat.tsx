@@ -15,7 +15,7 @@ export default function Chat() {
   const { fetchSSE, data } = useChatApi(inputValue)
 
   const handleSendMessage = async () => {
-    fetchSSE()
+    fetchSSE('translate')
   }
 
   const {
@@ -48,6 +48,15 @@ export default function Chat() {
         onClick={handleSendMessage}
       >
         提交
+      </Button>
+
+      <Button
+        size='sm'
+        onClick={() => {
+          fetchSSE('analyze')
+        }}
+      >
+        分析
       </Button>
       <Button
         size='sm'

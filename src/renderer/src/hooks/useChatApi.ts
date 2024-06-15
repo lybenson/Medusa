@@ -2,13 +2,16 @@ import { useState } from 'react'
 import { useSettings } from './useSettings'
 import { parseEventStream } from '@renderer/lib/utils'
 import { ENDPOINT, MODEL } from '@renderer/constants'
+import { type Action, actions } from '@renderer/lib/promots'
 
 export const useChatApi = (message: string) => {
   const { openAIApiKey } = useSettings()
 
   const [data, setData] = useState('')
 
-  const fetchSSE = async () => {
+  const fetchSSE = async (action: Action) => {
+    const messages = actions[action](message)
+
     const response = await fetch(ENDPOINT, {
       method: 'POST',
       headers: {
@@ -17,7 +20,7 @@ export const useChatApi = (message: string) => {
       },
       body: JSON.stringify({
         model: MODEL,
-        messages: [{ role: 'user', content: `翻译成中文:${message}` }],
+        messages: messages,
         stream: true
       })
     })
