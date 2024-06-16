@@ -6,8 +6,10 @@ export const sentences = sqliteTable('sentences', {
     autoIncrement: true
   }),
   original: text('original').notNull().unique(),
-  translation: text('translate').notNull(),
+  translation: text('translation').notNull(),
   grammar: text('grammar'),
+  learned: integer('learned', { mode: 'boolean' }).default(false),
+  deleted: integer('deleted', { mode: 'boolean' }).default(false),
   created_at: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
   updated_at: text('updated_at').default(sql`(CURRENT_TIMESTAMP)`)
 })
@@ -17,7 +19,7 @@ export const words = sqliteTable('words', {
     autoIncrement: true
   }),
   original: text('original').notNull().unique(),
-  translation: text('translate').notNull(),
+  translation: text('translation').notNull(),
   created_at: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
   updated_at: text('updated_at').default(sql`(CURRENT_TIMESTAMP)`)
 })

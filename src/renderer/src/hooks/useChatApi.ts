@@ -7,50 +7,60 @@ import { type Action, actions } from '@renderer/lib/promots'
 export const useChatApi = (message: string) => {
   const { openAIApiKey } = useSettings()
 
-  const [data, setData] = useState('')
+  const [translationData, setTranslationData] = useState('')
+  const [grammarData, setGrammarData] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const fetchSSE = async (action: Action) => {
     const messages = actions[action](message)
-
-    const response = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${openAIApiKey}`
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: messages,
-        stream: true
+    try {
+      setIsLoading(true)
+      const response = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${openAIApiKey}`
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: messages,
+          stream: true
+        })
       })
-    })
-    if (!response.body) return
-    const reader = response.body.getReader()
-    const decoder = new TextDecoder()
+      if (!response.body) return
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
 
-    let isDone = false
+      let isDone = false
 
-    let received = ''
+      let received = ''
 
-    while (!isDone) {
-      const { done, value } = await reader.read()
-      if (done) {
-        isDone = true
-        break
+      while (!isDone) {
+        const { done, value } = await reader.read()
+        if (done) {
+          isDone = true
+          break
+        }
+        const jsonArray = parseEventStream(decoder.decode(value))
+
+        jsonArray.forEach((json: any) => {
+          if (!json.choices || json.choices.length === 0) return
+
+          received += json.choices[0].delta?.content || ''
+
+          if (action === 'translate') setTranslationData(received)
+          else if (action === 'analyze') setGrammarData(received)
+        })
       }
-      const jsonArray = parseEventStream(decoder.decode(value))
-
-      jsonArray.forEach((json: any) => {
-        if (!json.choices || json.choices.length === 0) return
-
-        received += json.choices[0].delta?.content || ''
-
-        setData(received)
-      })
+      setIsLoading(false)
+    } catch (error) {
+      setIsLoading(false)
     }
   }
   return {
     fetchSSE: fetchSSE,
-    data
+    isLoading,
+    translationData,
+    grammarData
   }
 }

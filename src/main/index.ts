@@ -7,8 +7,8 @@ import { execute, runMigrate } from './sqlite'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 1500,
+    height: 900,
     minWidth: 640,
     minHeight: 480,
     titleBarStyle: 'hiddenInset',

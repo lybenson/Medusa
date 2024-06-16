@@ -2,12 +2,15 @@ import {
   SQLiteInsertValue,
   SQLiteUpdateSetSource
 } from 'drizzle-orm/sqlite-core'
-import { SQL } from 'drizzle-orm'
+import { ne, SQL } from 'drizzle-orm'
 import { sentences } from '@schema'
 import { db } from '.'
+import { PER_PAGE } from '@renderer/constants'
 
-export const fetchSentences = async () => {
-  const sentenceList = await db.query.sentences.findMany({
+export const fetchSentences = (limit = PER_PAGE, offset = 0) => {
+  return db.query.sentences.findMany({
+    limit,
+    offset,
     with: {
       relationList: {
         columns: {
@@ -18,9 +21,9 @@ export const fetchSentences = async () => {
           word: true
         }
       }
-    }
+    },
+    where: ne(sentences.deleted, true)
   })
-  return sentenceList
 }
 
 export const insertSentence = (

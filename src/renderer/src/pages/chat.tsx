@@ -2,8 +2,9 @@ import { Button } from '@renderer/components/ui/button'
 import { Textarea } from '@renderer/components/ui/textarea'
 import { insertSentence } from '@renderer/database/sentence'
 import { useChatApi } from '@renderer/hooks/useChatApi'
+import { Action } from '@renderer/lib/promots'
 import { useMutation } from '@tanstack/react-query'
-import { Loader } from 'lucide-react'
+import { Aperture, BarChart, Loader, Star } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -12,10 +13,15 @@ export default function Chat() {
     `Used by some of the world's largest companies, Next.js enables you to create high-quality web applications with the power of React components.`
   )
 
-  const { fetchSSE, data } = useChatApi(inputValue)
+  const {
+    fetchSSE,
+    translationData,
+    grammarData,
+    isLoading: translating
+  } = useChatApi(inputValue)
 
-  const handleSendMessage = async () => {
-    fetchSSE('translate')
+  const handleSendMessage = (action: Action) => {
+    fetchSSE(action)
   }
 
   const {
@@ -24,7 +30,7 @@ export default function Chat() {
     isSuccess: isCreateSentenceSuccess,
     isError: isCreateSentenceError
   } = useMutation({
-    mutationKey: ['createSentence'],
+    mutationKey: ['createSentence', inputValue],
     mutationFn: insertSentence
   })
 
@@ -35,43 +41,90 @@ export default function Chat() {
     <div>
       <Textarea
         className='min-h-32 mb-4 text-base'
+        wrap='hard'
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            handleSendMessage()
+            if (e.shiftKey) return
+            else {
+              e.preventDefault()
+
+              handleSendMessage('translate')
+            }
           }
         }}
       />
-      <Button
-        size='sm'
-        onClick={handleSendMessage}
-      >
-        提交
-      </Button>
+      <div className='flex justify-between'>
+        <div></div>
+        <div>
+          <Button
+            size='sm'
+            className='mr-2'
+            onClick={() => {
+              handleSendMessage('translate')
+            }}
+          >
+            <Aperture
+              size='16'
+              className='mr-2'
+            />
+            翻译
+          </Button>
+          <Button
+            size='sm'
+            className='mr-2'
+            onClick={() => {
+              handleSendMessage('analyze')
+            }}
+          >
+            <BarChart
+              size='16'
+              className='mr-2'
+            />
+            语法分析
+          </Button>
+          <Button
+            size='sm'
+            disabled={translating || !translationData}
+            onClick={async () => {
+              const res = await createSentence({
+                original: inputValue,
+                translation: translationData,
+                grammar: grammarData
+              })
+              console.log(res)
+            }}
+          >
+            {isCreatingSentence ? (
+              <Loader
+                size='16'
+                className='mr-2 animate-spin'
+              />
+            ) : (
+              <Star
+                size='16'
+                className='mr-2'
+              />
+            )}
+            添加到备忘录
+          </Button>
+        </div>
+      </div>
 
-      <Button
-        size='sm'
-        onClick={() => {
-          fetchSSE('analyze')
-        }}
-      >
-        分析
-      </Button>
-      <Button
-        size='sm'
-        onClick={() =>
-          createSentence({
-            original: 'I am a student 23',
-            translation: '我是一名学生 23'
-          })
-        }
-      >
-        {isCreatingSentence && <Loader className='mr-2 h-4 w-4 animate-spin' />}
-        添加到备忘录
-      </Button>
+      {translationData && (
+        <div className='mt-4'>
+          <div className='font-semibold'>译文:</div>
+          <p className='whitespace-pre-wrap mt-2'>{translationData}</p>
+        </div>
+      )}
 
-      <div>{data}</div>
+      {grammarData && (
+        <div className='mt-4'>
+          <div className='font-semibold'>语法分析:</div>
+          <p className='whitespace-pre-wrap mt-2'>{grammarData}</p>
+        </div>
+      )}
     </div>
   )
 }
