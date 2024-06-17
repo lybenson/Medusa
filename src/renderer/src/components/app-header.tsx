@@ -49,7 +49,7 @@ export default function AppHeader() {
       >
         <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>Set OpenAI Api Key</DrawerTitle>
+            <DrawerTitle>OpenAI Api Key</DrawerTitle>
           </DrawerHeader>
 
           <div className='mx-4'>

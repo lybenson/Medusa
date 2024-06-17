@@ -1,11 +1,10 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
 import AppHeader from './components/app-header'
 import Sidebar from './components/sidebar'
 import { routes } from './routes'
-import { usePageStore } from './store'
+import KeepAlive from 'keepalive-for-react'
 
 export default function App() {
-  const currentPath = usePageStore((state) => state.currentPath)
-
   return (
     <div className='flex flex-col h-screen'>
       <AppHeader />
@@ -15,11 +14,31 @@ export default function App() {
           <Sidebar />
         </div>
         <div className='flex-1 p-2'>
-          {routes.map((route) => (
-            <div key={route.path}>
-              {route.path === currentPath ? route.component : null}
-            </div>
-          ))}
+          <Routes>
+            {routes.map((route) => {
+              return (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={
+                    <KeepAlive activeName={route.path}>
+                      {route.component}
+                    </KeepAlive>
+                  }
+                />
+              )
+            })}
+
+            <Route
+              path='/'
+              element={
+                <Navigate
+                  to='/chat'
+                  replace
+                />
+              }
+            />
+          </Routes>
         </div>
       </div>
     </div>
