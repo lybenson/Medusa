@@ -2,8 +2,8 @@ import Menu from './menu'
 
 export default function Sidebar() {
   return (
-    <div>
+    <aside>
       <Menu />
-    </div>
+    </aside>
   )
 }

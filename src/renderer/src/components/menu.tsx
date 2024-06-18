@@ -4,12 +4,15 @@ import { routes } from '@renderer/routes'
 export default function Menu() {
   return (
     <div className='font-semibold'>
-      {routes.map((item) => (
-        <MenuItem
-          item={item}
-          key={item.path}
-        />
-      ))}
+      {routes.map(
+        (item) =>
+          item.isMenu && (
+            <MenuItem
+              item={item}
+              key={item.path}
+            />
+          )
+      )}
     </div>
   )
 }

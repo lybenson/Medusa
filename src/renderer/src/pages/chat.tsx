@@ -7,18 +7,15 @@ import { useMutation } from '@tanstack/react-query'
 import { Aperture, BarChart, Loader, Star } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import SentenceGrammar from './sentence-list/sentence-grammar'
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState(
     `Used by some of the world's largest companies, Next.js enables you to create high-quality web applications with the power of React components.`
   )
 
-  const {
-    fetchSSE,
-    translationData,
-    grammarData,
-    isLoading: translating
-  } = useChatApi(inputValue)
+  const { fetchSSE, translationData, grammarData, isTranslating, isAnalyzing } =
+    useChatApi(inputValue)
 
   const handleSendMessage = (action: Action) => {
     fetchSSE(action)
@@ -64,11 +61,19 @@ export default function Chat() {
             onClick={() => {
               handleSendMessage('translate')
             }}
+            disabled={isTranslating}
           >
-            <Aperture
-              size='16'
-              className='mr-2'
-            />
+            {isTranslating ? (
+              <Loader
+                size='16'
+                className='animate-spin mr-2'
+              />
+            ) : (
+              <Aperture
+                size='16'
+                className='mr-2'
+              />
+            )}
             翻译
           </Button>
           <Button
@@ -77,16 +82,26 @@ export default function Chat() {
             onClick={() => {
               handleSendMessage('analyze')
             }}
+            disabled={isAnalyzing}
           >
-            <BarChart
-              size='16'
-              className='mr-2'
-            />
+            {isAnalyzing ? (
+              <Loader
+                size='16'
+                className='animate-spin mr-2'
+              />
+            ) : (
+              <BarChart
+                size='16'
+                className='mr-2'
+              />
+            )}
             语法分析
           </Button>
           <Button
             size='sm'
-            disabled={translating || !translationData}
+            disabled={
+              isTranslating || isAnalyzing || !translationData || !grammarData
+            }
             onClick={async () => {
               const res = await createSentence({
                 original: inputValue,
@@ -111,18 +126,23 @@ export default function Chat() {
           </Button>
         </div>
       </div>
-
+      <div className='mt-4'>
+        <div className='font-semibold text-primary text-lg'>原文:</div>
+        <p className='whitespace-pre-wrap mt-1'>{inputValue}</p>
+      </div>
       {translationData && (
         <div className='mt-4'>
-          <div className='font-semibold'>译文:</div>
-          <p className='whitespace-pre-wrap mt-2'>{translationData}</p>
+          <div className='font-semibold text-primary text-lg'>译文:</div>
+          <p className='whitespace-pre-wrap mt-1'>{translationData}</p>
         </div>
       )}
 
       {grammarData && (
         <div className='mt-4'>
-          <div className='font-semibold'>语法分析:</div>
-          <p className='whitespace-pre-wrap mt-2'>{grammarData}</p>
+          <div className='font-semibold text-primary text-lg'>语法分析:</div>
+          <div className='mt-2'>
+            <SentenceGrammar grammar={grammarData} />
+          </div>
         </div>
       )}
     </div>

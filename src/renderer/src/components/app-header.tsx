@@ -24,8 +24,8 @@ export default function AppHeader() {
   }
 
   return (
-    <div
-      className='border-b flex flex-col'
+    <header
+      className='border-b flex flex-col sticky top-0 bg-white z-50 h-14 shrink-0'
       data-drag-region
     >
       <div className='flex items-center justify-between h-full'>
@@ -65,6 +65,6 @@ export default function AppHeader() {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-    </div>
+    </header>
   )
 }

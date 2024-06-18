@@ -4,17 +4,20 @@ import { parseEventStream } from '@renderer/lib/utils'
 import { ENDPOINT, MODEL } from '@renderer/constants'
 import { type Action, actions } from '@renderer/lib/promots'
 
-export const useChatApi = (message: string) => {
+export const useChatApi = (message?: string) => {
   const { openAIApiKey } = useSettings()
 
   const [translationData, setTranslationData] = useState('')
   const [grammarData, setGrammarData] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isTranslating, setIsTranslating] = useState(false)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
 
   const fetchSSE = async (action: Action) => {
+    if (!message) return
     const messages = actions[action](message)
     try {
-      setIsLoading(true)
+      action === 'translate' && setIsTranslating(true)
+      action === 'analyze' && setIsAnalyzing(true)
       const response = await fetch(ENDPOINT, {
         method: 'POST',
         headers: {
@@ -52,15 +55,23 @@ export const useChatApi = (message: string) => {
           else if (action === 'analyze') setGrammarData(received)
         })
       }
-      setIsLoading(false)
+      action === 'translate' && setIsTranslating(false)
+      action === 'analyze' && setIsAnalyzing(false)
     } catch (error) {
-      setIsLoading(false)
+      action === 'translate' && setIsTranslating(false)
+      action === 'analyze' && setIsAnalyzing(false)
     }
   }
+
+  const resetTranslationData = () => setTranslationData('')
+  const resetGrammarData = () => setGrammarData('')
   return {
     fetchSSE: fetchSSE,
-    isLoading,
+    isTranslating,
+    isAnalyzing,
     translationData,
-    grammarData
+    grammarData,
+    resetTranslationData,
+    resetGrammarData
   }
 }
