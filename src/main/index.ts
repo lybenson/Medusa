@@ -19,6 +19,7 @@ function createWindow(): void {
       sandbox: false
     }
   })
+  mainWindow.webContents.send('ping', 'hello')
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
@@ -54,9 +55,10 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // IPC test
+  // ji异步消息
   ipcMain.on('ping', () => console.log('pong'))
 
+  // 同步消息
   ipcMain.handle('db:execute', execute)
   await runMigrate()
 

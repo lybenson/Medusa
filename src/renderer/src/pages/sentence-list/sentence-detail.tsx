@@ -14,6 +14,7 @@ import {
 import { useToggle } from '@uidotdev/usehooks'
 import { eq } from 'drizzle-orm'
 import { sentences } from '@schema'
+import { PopoverArrow } from '@radix-ui/react-popover'
 
 export default function SentenceDetail() {
   const { id } = useParams()
@@ -26,6 +27,8 @@ export default function SentenceDetail() {
     },
     enabled: !!id
   })
+
+  console.log(sentence)
 
   const {
     fetchSSE,
@@ -86,7 +89,7 @@ export default function SentenceDetail() {
       <div className='px-4'>
         <SentenceSection
           title='原文'
-          desc={sentence?.original || ''}
+          content={sentence?.original || ''}
         />
 
         <SentenceSection
@@ -119,7 +122,9 @@ export default function SentenceDetail() {
                     替换
                   </Button>
                 </PopoverTrigger>
+
                 <PopoverContent className='w-fit p-2'>
+                  <PopoverArrow className='fill-neutral-200' />
                   <div className='flex items-center text-sm'>
                     <CircleHelp
                       size={16}
@@ -158,7 +163,7 @@ export default function SentenceDetail() {
               </Button>
             </div>
           }
-          desc={translationData || sentence?.translation || ''}
+          content={translationData || sentence?.translation || ''}
         />
 
         <SentenceSection
@@ -230,7 +235,7 @@ export default function SentenceDetail() {
               </Button>
             </div>
           }
-          desc={
+          content={
             <SentenceGrammar grammar={grammarData || sentence?.grammar || ''} />
           }
         />

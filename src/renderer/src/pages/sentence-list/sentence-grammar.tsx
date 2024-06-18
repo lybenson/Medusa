@@ -10,7 +10,7 @@ export default function SentenceGrammar({ grammar }) {
 
   return (
     <Card>
-      <CardContent className='overflow-auto pt-6'>
+      <CardContent className='max-h-80 overflow-auto pt-6'>
         <article
           className='prose prose-xs prose-zinc max-w-full'
           dangerouslySetInnerHTML={{

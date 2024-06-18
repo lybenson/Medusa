@@ -5,13 +5,16 @@ import { useChatApi } from '@renderer/hooks/useChatApi'
 import { Action } from '@renderer/lib/promots'
 import { useMutation } from '@tanstack/react-query'
 import { Aperture, BarChart, Loader, Star } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import SentenceGrammar from './sentence-list/sentence-grammar'
+import SentenceSection from './sentence-list/sentence-section'
+import TextPopover from '@renderer/components/text-popover'
+import { useToggle } from '@uidotdev/usehooks'
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState(
-    `Used by some of the world's largest companies, Next.js enables you to create high-quality web applications with the power of React components.`
+    `For years parents have espoused the health benefits of eating garlic bread with cheese to their children, with the food earning such an iconic status in our culture that kids will often dress up as warm, cheesy loaf for Halloween.`
   )
 
   const { fetchSSE, translationData, grammarData, isTranslating, isAnalyzing } =
@@ -34,9 +37,57 @@ export default function Chat() {
   isCreateSentenceSuccess && toast.success('添加到备忘录成功')
   isCreateSentenceError && toast.error('添加到备忘录失败')
 
+  const [textPopoverOpen, toggleTextPopover] = useToggle(false)
+
+  const [popoverPosition, setPopoverPosition] = useState({
+    left: 0,
+    top: 0
+  })
+
+  const handleSelection = () => {
+    const selection = window.getSelection()
+    if (
+      selection &&
+      selection.rangeCount > 0 &&
+      selection.toString().length > 0
+    ) {
+      const range = selection.getRangeAt(0)
+      const rect = range.getBoundingClientRect()
+      setPopoverPosition({
+        left: rect.x + rect.width / 2,
+        top: rect.y + rect.height + 5
+      })
+      toggleTextPopover(true)
+    }
+  }
+
+  const selectableRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!selectableRef.current) return
+
+    const selectableEle = selectableRef.current
+
+    const handleMouseUp = handleSelection
+
+    const handleKeyUp = (event) => {
+      if (event.key === 'Shift') {
+        handleSelection()
+      }
+    }
+
+    selectableEle.addEventListener('mouseup', handleMouseUp)
+    selectableEle.addEventListener('keyup', handleKeyUp)
+
+    return () => {
+      selectableEle.removeEventListener('mouseup', handleMouseUp)
+      selectableEle.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [selectableRef])
+
   return (
-    <div>
+    <div className='relative'>
       <Textarea
+        id='selectable'
         className='min-h-32 mb-4 text-base'
         wrap='hard'
         value={inputValue}
@@ -46,7 +97,6 @@ export default function Chat() {
             if (e.shiftKey) return
             else {
               e.preventDefault()
-
               handleSendMessage('translate')
             }
           }
@@ -126,25 +176,31 @@ export default function Chat() {
           </Button>
         </div>
       </div>
-      <div className='mt-4'>
-        <div className='font-semibold text-primary text-lg'>原文:</div>
-        <p className='whitespace-pre-wrap mt-1'>{inputValue}</p>
-      </div>
+
+      <SentenceSection
+        title='原文'
+        content={<div ref={selectableRef}>{inputValue}</div>}
+      />
       {translationData && (
-        <div className='mt-4'>
-          <div className='font-semibold text-primary text-lg'>译文:</div>
-          <p className='whitespace-pre-wrap mt-1'>{translationData}</p>
-        </div>
+        <SentenceSection
+          title='译文'
+          content={translationData}
+        />
       )}
 
       {grammarData && (
-        <div className='mt-4'>
-          <div className='font-semibold text-primary text-lg'>语法分析:</div>
-          <div className='mt-2'>
-            <SentenceGrammar grammar={grammarData} />
-          </div>
-        </div>
+        <SentenceSection
+          title='语法分析'
+          content={<SentenceGrammar grammar={grammarData} />}
+        />
       )}
+
+      <TextPopover
+        left={popoverPosition.left}
+        top={popoverPosition.top}
+        open={textPopoverOpen}
+        toggleOpen={toggleTextPopover}
+      />
     </div>
   )
 }
