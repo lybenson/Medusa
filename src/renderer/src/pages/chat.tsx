@@ -2,7 +2,6 @@ import { Button } from '@renderer/components/ui/button'
 import { Textarea } from '@renderer/components/ui/textarea'
 import { insertSentence } from '@renderer/database/sentence'
 import { useChatApi } from '@renderer/hooks/useChatApi'
-import { Action } from '@renderer/lib/promots'
 import { useMutation } from '@tanstack/react-query'
 import { Aperture, BarChart, Loader, Star } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
@@ -11,18 +10,25 @@ import SentenceGrammar from './sentence-list/sentence-grammar'
 import SentenceSection from './sentence-list/sentence-section'
 import TextPopover from '@renderer/components/text-popover'
 import { useToggle } from '@uidotdev/usehooks'
+import { Sheet, SheetContent } from '@renderer/components/ui/sheet'
+import WordParaphrase from '@renderer/components/word-paraphrase'
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState(
     `For years parents have espoused the health benefits of eating garlic bread with cheese to their children, with the food earning such an iconic status in our culture that kids will often dress up as warm, cheesy loaf for Halloween.`
   )
 
-  const { fetchSSE, translationData, grammarData, isTranslating, isAnalyzing } =
-    useChatApi(inputValue)
+  const {
+    fetchSSE: fetchTranslate,
+    data: translationData,
+    isLoading: isTranslating
+  } = useChatApi('translate')
 
-  const handleSendMessage = (action: Action) => {
-    fetchSSE(action)
-  }
+  const {
+    fetchSSE: fetchAnalyse,
+    data: grammarData,
+    isLoading: isAnalyzing
+  } = useChatApi('analyze')
 
   const {
     mutateAsync: createSentence,
@@ -44,6 +50,7 @@ export default function Chat() {
     top: 0
   })
 
+  const [selectedText, setSelectedText] = useState('')
   const handleSelection = () => {
     const selection = window.getSelection()
     if (
@@ -57,6 +64,7 @@ export default function Chat() {
         left: rect.x + rect.width / 2,
         top: rect.y + rect.height + 5
       })
+      setSelectedText(selection.toString())
       toggleTextPopover(true)
     }
   }
@@ -84,6 +92,12 @@ export default function Chat() {
     }
   }, [selectableRef])
 
+  const [sheetOpen, toggleSheetOpen] = useToggle(false)
+  const handleTranslateWord = () => {
+    toggleTextPopover(false)
+    toggleSheetOpen(true)
+  }
+
   return (
     <div className='relative'>
       <Textarea
@@ -97,7 +111,7 @@ export default function Chat() {
             if (e.shiftKey) return
             else {
               e.preventDefault()
-              handleSendMessage('translate')
+              fetchTranslate(inputValue)
             }
           }
         }}
@@ -108,9 +122,7 @@ export default function Chat() {
           <Button
             size='sm'
             className='mr-2'
-            onClick={() => {
-              handleSendMessage('translate')
-            }}
+            onClick={() => fetchTranslate(inputValue)}
             disabled={isTranslating}
           >
             {isTranslating ? (
@@ -129,9 +141,7 @@ export default function Chat() {
           <Button
             size='sm'
             className='mr-2'
-            onClick={() => {
-              handleSendMessage('analyze')
-            }}
+            onClick={() => fetchAnalyse(inputValue)}
             disabled={isAnalyzing}
           >
             {isAnalyzing ? (
@@ -200,7 +210,24 @@ export default function Chat() {
         top={popoverPosition.top}
         open={textPopoverOpen}
         toggleOpen={toggleTextPopover}
+        onTrigger={handleTranslateWord}
       />
+
+      <Sheet
+        open={sheetOpen}
+        onOpenChange={toggleSheetOpen}
+      >
+        <SheetContent
+          className=' overflow-auto'
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          // onInteractOutside={(e) => e.preventDefault()}
+        >
+          <WordParaphrase
+            word={selectedText}
+            sentence={inputValue}
+          />
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

@@ -2,22 +2,29 @@ import { useState } from 'react'
 import { useSettings } from './useSettings'
 import { parseEventStream } from '@renderer/lib/utils'
 import { ENDPOINT, MODEL } from '@renderer/constants'
-import { type Action, actions } from '@renderer/lib/promots'
+import { type Action, actions, Message } from '@renderer/lib/promots'
 
-export const useChatApi = (message?: string) => {
+import { toast } from 'sonner'
+
+export const useChatApi = (action: Action) => {
   const { openAIApiKey } = useSettings()
 
-  const [translationData, setTranslationData] = useState('')
-  const [grammarData, setGrammarData] = useState('')
-  const [isTranslating, setIsTranslating] = useState(false)
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [data, setData] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  const fetchSSE = async (action: Action) => {
-    if (!message) return
-    const messages = actions[action](message)
+  const fetchSSE = async (sentence?: string, word?: string) => {
+    let messages: Message[] = []
+    if (action === 'word') {
+      if (!sentence || !word) return
+      messages = actions[action](sentence, word)
+    } else if (action === 'translate' || action === 'analyze') {
+      if (!sentence) return
+      messages = actions[action](sentence)
+    }
+
+    if (!openAIApiKey) return toast.error('请设置 OpenAI API Key')
     try {
-      action === 'translate' && setIsTranslating(true)
-      action === 'analyze' && setIsAnalyzing(true)
+      setIsLoading(true)
       const response = await fetch(ENDPOINT, {
         method: 'POST',
         headers: {
@@ -51,27 +58,21 @@ export const useChatApi = (message?: string) => {
 
           received += json.choices[0].delta?.content || ''
 
-          if (action === 'translate') setTranslationData(received)
-          else if (action === 'analyze') setGrammarData(received)
+          setData(received)
         })
       }
-      action === 'translate' && setIsTranslating(false)
-      action === 'analyze' && setIsAnalyzing(false)
+      setIsLoading(false)
     } catch (error) {
-      action === 'translate' && setIsTranslating(false)
-      action === 'analyze' && setIsAnalyzing(false)
+      setIsLoading(false)
     }
   }
 
-  const resetTranslationData = () => setTranslationData('')
-  const resetGrammarData = () => setGrammarData('')
+  const resetData = () => setData('')
+
   return {
-    fetchSSE: fetchSSE,
-    isTranslating,
-    isAnalyzing,
-    translationData,
-    grammarData,
-    resetTranslationData,
-    resetGrammarData
+    fetchSSE,
+    isLoading,
+    data,
+    resetData
   }
 }

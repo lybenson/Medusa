@@ -31,14 +31,18 @@ export default function SentenceDetail() {
   console.log(sentence)
 
   const {
-    fetchSSE,
-    translationData,
-    grammarData,
-    isTranslating,
-    isAnalyzing,
-    resetGrammarData,
-    resetTranslationData
-  } = useChatApi(sentence?.original)
+    fetchSSE: fetchTranslate,
+    data: translationData,
+    isLoading: isTranslating,
+    resetData: resetTranslationData
+  } = useChatApi('translate')
+
+  const {
+    fetchSSE: fetchAnalyse,
+    data: grammarData,
+    isLoading: isAnalyzing,
+    resetData: resetGrammarData
+  } = useChatApi('analyze')
 
   const handleReplaceTranslation = async () => {
     if (!sentence) return
@@ -97,7 +101,7 @@ export default function SentenceDetail() {
             <div className='flex items-center gap-x-3'>
               <span>译文</span>
               <Button
-                onClick={() => fetchSSE('translate')}
+                onClick={() => fetchTranslate(sentence?.original)}
                 variant='ghost'
                 className='p-0 ml-1 hover:bg-transparent'
               >
@@ -171,7 +175,7 @@ export default function SentenceDetail() {
             <div className='flex items-center gap-x-3'>
               <span>语法分析</span>
               <Button
-                onClick={() => fetchSSE('analyze')}
+                onClick={() => fetchAnalyse(sentence?.original)}
                 variant='ghost'
                 className='p-0 ml-1 hover:bg-transparent'
               >
