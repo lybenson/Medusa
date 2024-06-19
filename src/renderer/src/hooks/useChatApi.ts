@@ -10,9 +10,10 @@ export const useChatApi = (action: Action) => {
   const { openAIApiKey } = useSettings()
 
   const [data, setData] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [isfetching, setIsfetching] = useState(false)
 
   const fetchSSE = async (sentence?: string, word?: string) => {
+    if (isfetching) return
     let messages: Message[] = []
     if (action === 'word') {
       if (!sentence || !word) return
@@ -22,9 +23,13 @@ export const useChatApi = (action: Action) => {
       messages = actions[action](sentence)
     }
 
-    if (!openAIApiKey) return toast.error('请设置 OpenAI API Key')
+    // or return new Error(), not toast.error()
+    if (!openAIApiKey) {
+      toast.error('请设置 OpenAI API Key')
+      return
+    }
     try {
-      setIsLoading(true)
+      setIsfetching(true)
       const response = await fetch(ENDPOINT, {
         method: 'POST',
         headers: {
@@ -61,9 +66,9 @@ export const useChatApi = (action: Action) => {
           setData(received)
         })
       }
-      setIsLoading(false)
+      setIsfetching(false)
     } catch (error) {
-      setIsLoading(false)
+      setIsfetching(false)
     }
   }
 
@@ -71,7 +76,7 @@ export const useChatApi = (action: Action) => {
 
   return {
     fetchSSE,
-    isLoading,
+    isfetching,
     data,
     resetData
   }

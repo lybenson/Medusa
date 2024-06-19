@@ -36,7 +36,9 @@ const wordMessages = (sentence: string, word: string): Message[] => {
       content: `You are an expert in the semantic syntax of the English language, and you are teaching me the English language.I will give you a sentence in English and a word from that sentence. Firstly, provide the corresponding phonetic notation or transcription of the word in English. Then, help me explain in 简体中文 what the word means in the sentence, what the sentence itself means, and whether the word is part of an idiom in the sentence. If it is, explain the idiom in the sentence. Provide 3 to 5 examples in English with the same meaning, and explain these examples in 简体中文. The answer should follow the format below:
 
       <word> · /<IPA>/
+
       <the remaining part>
+
       If you understand, say "yes", and then we will begin.
       `
     },

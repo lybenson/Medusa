@@ -6,12 +6,12 @@ import { useMutation } from '@tanstack/react-query'
 import { Aperture, BarChart, Loader, Star } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import SentenceGrammar from './sentence-list/sentence-grammar'
-import SentenceSection from './sentence-list/sentence-section'
+import SentenceGrammar from './sentence/sentence-grammar'
+import SentenceSection from './sentence/sentence-section'
 import TextPopover from '@renderer/components/text-popover'
 import { useToggle } from '@uidotdev/usehooks'
 import { Sheet, SheetContent } from '@renderer/components/ui/sheet'
-import WordParaphrase from '@renderer/components/word-paraphrase'
+import WordParaphrase from './word/word-paraphrase'
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState(
@@ -21,13 +21,13 @@ export default function Chat() {
   const {
     fetchSSE: fetchTranslate,
     data: translationData,
-    isLoading: isTranslating
+    isfetching: isTranslating
   } = useChatApi('translate')
 
   const {
     fetchSSE: fetchAnalyse,
     data: grammarData,
-    isLoading: isAnalyzing
+    isfetching: isAnalyzing
   } = useChatApi('analyze')
 
   const {
@@ -218,13 +218,13 @@ export default function Chat() {
         onOpenChange={toggleSheetOpen}
       >
         <SheetContent
-          className=' overflow-auto'
+          className='overflow-auto pt-14'
           onEscapeKeyDown={(e) => e.preventDefault()}
           // onInteractOutside={(e) => e.preventDefault()}
         >
           <WordParaphrase
-            word={selectedText}
-            sentence={inputValue}
+            wordOriginal={selectedText}
+            sentenceOriginal={inputValue}
           />
         </SheetContent>
       </Sheet>

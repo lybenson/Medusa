@@ -1,7 +1,7 @@
 import Chat from '@renderer/pages/chat'
-import SentenceDetail from '@renderer/pages/sentence-list/sentence-detail'
-import SentenceList from '@renderer/pages/sentence-list/sentence-list'
-import WordList from '@renderer/pages/word-list'
+import SentenceDetail from '@renderer/pages/sentence/sentence-detail'
+import SentenceList from '@renderer/pages/sentence/sentence-list'
+import WordList from '@renderer/pages/word/word-list'
 import { MessageCircleQuestion, Swords, Trophy } from 'lucide-react'
 
 export type RoutePath =
@@ -32,15 +32,13 @@ export const routes: RouteItem[] = [
     component: <SentenceList />,
     text: 'Sentence List',
     isMenu: true,
-    icon: <Trophy size={18} />,
-    children: [
-      {
-        path: ':id',
-        component: <SentenceDetail />,
-        isMenu: false,
-        text: 'Sentence Detail'
-      }
-    ]
+    icon: <Trophy size={18} />
+  },
+  {
+    path: 'sentence-list/:id',
+    component: <SentenceDetail />,
+    text: 'Sentence Detail',
+    isMenu: false
   },
   {
     path: 'word-list',
