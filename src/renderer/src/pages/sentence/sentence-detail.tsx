@@ -180,7 +180,7 @@ export default function SentenceDetail() {
           />
 
           <SentenceSection
-            title='单词'
+            title='生词'
             content={
               <WordTags
                 words={sentence.words}

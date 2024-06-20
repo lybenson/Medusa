@@ -1,8 +1,8 @@
+import SpeakButton from '@renderer/components/speak-button'
 import { Button } from '@renderer/components/ui/button'
 import { PER_PAGE } from '@renderer/constants'
 import { fetchWords } from '@renderer/database/word'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Volume2 } from 'lucide-react'
 
 export default function WordList() {
   const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
@@ -34,13 +34,11 @@ export default function WordList() {
               {word.translation}
             </div>
             <div className='flex items-center mt-2 justify-end'>
-              <Button
+              <SpeakButton
+                message={word.original}
                 variant='ghost'
                 className='p-0'
-                size='sm'
-              >
-                <Volume2 size={16} />
-              </Button>
+              />
               {/* <Button
                   variant='ghost'
                   className='p-0'

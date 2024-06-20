@@ -73,6 +73,7 @@ export default function WordParaphrase(props: WordParaphraseProps) {
     return (
       <div className='overflow-auto '>
         <div className='flex items-center '>
+          <SpeakButton message={wordOriginal}>朗读</SpeakButton>
           <Button
             size='sm'
             className='mr-2'
@@ -81,13 +82,11 @@ export default function WordParaphrase(props: WordParaphraseProps) {
           >
             添加到生词簿
           </Button>
-
-          <SpeakButton message={wordOriginal}>朗读</SpeakButton>
-
           {'wordOriginal' in props && (
             <Button
               onClick={() => fetchSSE(sentenceOriginal, wordOriginal)}
               size='sm'
+              disabled={isTranslating || !wordOriginal}
             >
               <RotateCw
                 size={16}

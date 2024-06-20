@@ -2,7 +2,7 @@ export type Message = {
   role: 'system' | 'user'
   content: string
 }
-
+// reference from https://https://github.com/openai-translator/openai-translator
 const translateMessages = (message: string): Message[] => {
   return [
     {

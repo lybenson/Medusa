@@ -29,18 +29,11 @@ export default function Chat() {
     isFetching: isAnalyzing
   } = useChatApi('analyze')
 
-  const {
-    mutateAsync: createSentence,
-    isPending: isCreatingSentence,
-    isSuccess: isCreateSentenceSuccess,
-    isError: isCreateSentenceError
-  } = useMutation({
-    mutationKey: ['createSentence', inputValue],
-    mutationFn: insertSentence
-  })
-
-  isCreateSentenceSuccess && toast.success('添加到备忘录成功')
-  isCreateSentenceError && toast.error('添加到备忘录失败')
+  const { mutateAsync: createSentence, isPending: isCreatingSentence } =
+    useMutation({
+      mutationKey: ['createSentence', inputValue],
+      mutationFn: insertSentence
+    })
 
   const [textPopoverOpen, toggleTextPopover] = useToggle(false)
 
@@ -64,6 +57,9 @@ export default function Chat() {
         top: rect.y + rect.height + 5
       })
       setSelectedText(selection.toString())
+
+      console.log('selectedText:', selectedText)
+
       toggleTextPopover(true)
     }
   }
@@ -89,7 +85,7 @@ export default function Chat() {
       selectableEle.removeEventListener('mouseup', handleMouseUp)
       selectableEle.removeEventListener('keyup', handleKeyUp)
     }
-  }, [selectableRef])
+  }, [selectableRef.current])
 
   const [sheetOpen, toggleSheetOpen] = useToggle(false)
   const handleTranslateWord = () => {
@@ -163,12 +159,16 @@ export default function Chat() {
               isTranslating || isAnalyzing || !translationData || !grammarData
             }
             onClick={async () => {
-              const res = await createSentence({
-                original: inputValue,
-                translation: translationData,
-                grammar: grammarData
-              })
-              console.log(res)
+              try {
+                await createSentence({
+                  original: inputValue,
+                  translation: translationData,
+                  grammar: grammarData
+                })
+                toast.success('添加到备忘录成功')
+              } catch (error) {
+                toast.error('添加到备忘录失败')
+              }
             }}
           >
             {isCreatingSentence ? (
