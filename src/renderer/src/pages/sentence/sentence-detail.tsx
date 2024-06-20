@@ -38,14 +38,14 @@ export default function SentenceDetail() {
   const {
     fetchSSE: fetchTranslate,
     data: translationData,
-    isfetching: isTranslating,
+    isFetching: isTranslating,
     resetData: resetTranslationData
   } = useChatApi('translate')
 
   const {
     fetchSSE: fetchAnalyse,
     data: grammarData,
-    isfetching: isAnalyzing,
+    isFetching: isAnalyzing,
     resetData: resetGrammarData
   } = useChatApi('analyze')
 

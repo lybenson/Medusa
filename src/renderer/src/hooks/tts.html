@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8" />
+    <title>语音播报示例</title>
+    <script src="https://unpkg.com/vue@3.2.16/dist/vue.global.prod.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <button @click="speak">播放文本</button>
+      <button @click="pause">暂停/继续</button>
+      <button @click="stop">停止</button>
+    </div>
+
+    <script>
+      const { createApp, reactive, ref } = Vue
+
+      const textEncoder = new TextEncoder()
+      const binaryHeadEnd = textEncoder.encode('Path:audio\r\n').toString()
+
+      const speechConfig = () =>
+        `X-Timestamp:${new Date().toISOString()}\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n{"context":{"synthesis":{"audio":{"metadataoptions":{"sentenceBoundaryEnabled":"false","wordBoundaryEnabled":"true"},"outputFormat":"webm-24khz-16bit-mono-opus"}}}}`
+
+      const ssmlText = (state, localVoiceList) => {
+        const requestId = guid()
+        return `X-RequestId:${requestId}\r\nContent-Type:application/ssml+xml\r\nX-Timestamp:${new Date().toISOString()}\r\nPath:ssml\r\n\r\n<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='https://www.w3.org/2001/mstts' xml:lang='${state.lan}'><voice name='${localVoiceList[state.lan][state.voice].Name}'><prosody pitch='${numToString(state.pitch)}Hz' rate ='${numToString(state.rate)}%' volume='${numToString(state.volume)}%'>${state.text}</prosody></voice></speak>`
+      }
+
+      function guid() {
+        function gen(count) {
+          var out = ''
+          for (var i = 0; i < count; i++) {
+            out += (((1 + Math.random()) * 0x10000) | 0)
+              .toString(16)
+              .substring(1)
+          }
+          return out
+        }
+        return gen(8)
+      }
+
+      function numToString(num) {
+        return num >= 0 ? `+${num}` : `${num}`
+      }
+
+      createApp({
+        setup() {
+          const state = reactive({
+            text: '你好，世界！我能为你做什么？',
+            pitch: 0,
+            rate: 30,
+            volume: 0,
+            lan: 'zh-CN',
+            voice: 0
+          })
+
+          const localVoiceList = {
+            'zh-CN': [{ Name: 'zh-CN-XiaoxiaoNeural' }]
+          }
+
+          // 创建一个响应式引用来跟踪音频对象
+          const audio = ref(null)
+
+          function speak() {
+            const bufferList = []
+            const ws = new WebSocket(
+              'wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=6A5AA1D4EAFF4E9FB37E23D68491D6F4'
+            )
+
+            ws.addEventListener('open', () => {
+              ws.send(speechConfig())
+              ws.send(ssmlText(state, localVoiceList))
+            })
+
+            ws.addEventListener('message', async ({ data }) => {
+              if (data instanceof Blob) {
+                const view = new Uint8Array(await data.arrayBuffer())
+                bufferList.push(
+                  ...view
+                    .toString()
+                    .split(binaryHeadEnd)[1]
+                    .split(',')
+                    .slice(1)
+                    .map((i) => +i)
+                )
+                if (view[0] == 0x00 && view[1] == 0x67 && view[2] == 0x58) {
+                  ws.close(1000)
+                }
+              }
+            })
+
+            ws.addEventListener('error', (err) => {
+              console.error('WebSocket error', err)
+            })
+
+            ws.addEventListener('close', () => {
+              if (bufferList.length) {
+                const blob = new Blob([new Uint8Array(bufferList)], {
+                  type: 'audio/webm'
+                })
+                const audioUrl = URL.createObjectURL(blob)
+                // 将Audio对象保存在Vue实例中
+                audio.value = new Audio(audioUrl)
+                audio.value.play()
+              } else {
+                console.error('No audio data received.')
+              }
+            })
+          }
+
+          // 暂停/继续播放的功能
+          function pause() {
+            if (audio.value) {
+              if (audio.value.paused) {
+                audio.value.play()
+              } else {
+                audio.value.pause()
+              }
+            }
+          }
+
+          // 停止播放的功能
+          function stop() {
+            if (audio.value) {
+              audio.value.pause() // 暂停播放
+              audio.value.currentTime = 0 // 重置时间
+            }
+          }
+
+          return {
+            speak,
+            pause,
+            stop
+          }
+        }
+      }).mount('#app')
+    </script>
+  </body>
+</html>

@@ -10,7 +10,7 @@ export default function WordTags({
 }) {
   return (
     <div>
-      <div className='flex gap-x-2'>
+      <div className='flex gap-2 flex-wrap'>
         {words.map((word) => (
           <Button
             size='sm'

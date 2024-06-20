@@ -12,22 +12,21 @@ import TextPopover from '@renderer/components/text-popover'
 import { useToggle } from '@uidotdev/usehooks'
 import { Sheet, SheetContent } from '@renderer/components/ui/sheet'
 import WordParaphrase from './word/word-paraphrase'
+import SpeakButton from '@renderer/components/speak-button'
 
 export default function Chat() {
-  const [inputValue, setInputValue] = useState(
-    `For years parents have espoused the health benefits of eating garlic bread with cheese to their children, with the food earning such an iconic status in our culture that kids will often dress up as warm, cheesy loaf for Halloween.`
-  )
+  const [inputValue, setInputValue] = useState('')
 
   const {
     fetchSSE: fetchTranslate,
     data: translationData,
-    isfetching: isTranslating
+    isFetching: isTranslating
   } = useChatApi('translate')
 
   const {
     fetchSSE: fetchAnalyse,
     data: grammarData,
-    isfetching: isAnalyzing
+    isFetching: isAnalyzing
   } = useChatApi('analyze')
 
   const {
@@ -119,11 +118,12 @@ export default function Chat() {
       <div className='flex justify-between'>
         <div></div>
         <div>
+          <SpeakButton message={inputValue}>朗读</SpeakButton>
           <Button
             size='sm'
             className='mr-2'
             onClick={() => fetchTranslate(inputValue)}
-            disabled={isTranslating}
+            disabled={isTranslating || !inputValue}
           >
             {isTranslating ? (
               <Loader
@@ -142,7 +142,7 @@ export default function Chat() {
             size='sm'
             className='mr-2'
             onClick={() => fetchAnalyse(inputValue)}
-            disabled={isAnalyzing}
+            disabled={isAnalyzing || !inputValue}
           >
             {isAnalyzing ? (
               <Loader
@@ -187,10 +187,13 @@ export default function Chat() {
         </div>
       </div>
 
-      <SentenceSection
-        title='原文'
-        content={<div ref={selectableRef}>{inputValue}</div>}
-      />
+      {inputValue && (
+        <SentenceSection
+          title='原文'
+          content={<div ref={selectableRef}>{inputValue}</div>}
+        />
+      )}
+
       {translationData && (
         <SentenceSection
           title='译文'

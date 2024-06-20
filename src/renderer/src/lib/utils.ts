@@ -33,3 +33,19 @@ export function parseEventStream(message: string) {
 
   return result
 }
+
+export const parseTTSStream = (message: string) => {
+  let headers: Record<'X-RequestId' | 'Content-Type' | 'Path', string> | {} = {}
+
+  message
+    .slice(0, message.indexOf('\r\n\r\n'))
+    .split('\r\n')
+    .forEach((line) => {
+      const [key, value] = line.split(':', 2)
+      headers[key as 'X-RequestId' | 'Content-Type' | 'Path'] = value
+    })
+
+  const data = message.slice(message.indexOf('\r\n\r\n') + 4)
+
+  return { headers, data }
+}

@@ -10,10 +10,10 @@ export const useChatApi = (action: Action) => {
   const { openAIApiKey } = useSettings()
 
   const [data, setData] = useState('')
-  const [isfetching, setIsfetching] = useState(false)
+  const [isFetching, setIsFetching] = useState(false)
 
   const fetchSSE = async (sentence?: string, word?: string) => {
-    if (isfetching) return
+    if (isFetching) return
     let messages: Message[] = []
     if (action === 'word') {
       if (!sentence || !word) return
@@ -29,7 +29,7 @@ export const useChatApi = (action: Action) => {
       return
     }
     try {
-      setIsfetching(true)
+      setIsFetching(true)
       const response = await fetch(ENDPOINT, {
         method: 'POST',
         headers: {
@@ -66,9 +66,9 @@ export const useChatApi = (action: Action) => {
           setData(received)
         })
       }
-      setIsfetching(false)
+      setIsFetching(false)
     } catch (error) {
-      setIsfetching(false)
+      setIsFetching(false)
     }
   }
 
@@ -76,7 +76,7 @@ export const useChatApi = (action: Action) => {
 
   return {
     fetchSSE,
-    isfetching,
+    isFetching,
     data,
     resetData
   }

@@ -8,6 +8,7 @@ import { fetchOneSentenceByOriginal } from '@renderer/database/sentence'
 import { toast } from 'sonner'
 import { WordsReturn } from '@schema'
 import { RotateCw } from 'lucide-react'
+import SpeakButton from '@renderer/components/speak-button'
 
 type WordParaphraseProps =
   | {
@@ -21,7 +22,7 @@ export default function WordParaphrase(props: WordParaphraseProps) {
   const {
     fetchSSE,
     data: wordTranslationData,
-    isfetching: isTranslating
+    isFetching: isTranslating
   } = useChatApi('word')
 
   const {
@@ -40,42 +41,6 @@ export default function WordParaphrase(props: WordParaphraseProps) {
   useEffect(() => {
     if ('wordOriginal' in props) fetchSSE(sentenceOriginal, wordOriginal)
   }, [])
-
-  const Renderer = (literal: string) => {
-    return (
-      <div className='overflow-auto'>
-        <Button
-          size='sm'
-          onClick={() => handleInsertWord()}
-          disabled={isTranslating || isCreatingWord}
-        >
-          添加到生词簿
-        </Button>
-
-        {'wordOriginal' in props && (
-          <Button
-            onClick={() => fetchSSE(sentenceOriginal, wordOriginal)}
-            variant='ghost'
-            className='p-0 ml-1 hover:bg-transparent'
-          >
-            <RotateCw
-              size={16}
-              className={`ml-1 ${isTranslating ? 'animate-spin' : ''}`}
-            />
-          </Button>
-        )}
-
-        <div className='mt-2'>
-          <Paragraph literal={literal} />
-        </div>
-      </div>
-    )
-  }
-  if ('word' in props) {
-    return Renderer(props.word.translation)
-  }
-
-  const { sentenceOriginal, wordOriginal } = props
 
   const handleInsertWord = async () => {
     let sentence
@@ -98,5 +63,57 @@ export default function WordParaphrase(props: WordParaphraseProps) {
     }
   }
 
-  return Renderer(wordTranslationData)
+  const Renderer = ({
+    wordOriginal,
+    literal
+  }: {
+    wordOriginal: string
+    literal: string
+  }) => {
+    return (
+      <div className='overflow-auto '>
+        <div className='flex items-center '>
+          <Button
+            size='sm'
+            className='mr-2'
+            onClick={() => handleInsertWord()}
+            disabled={isTranslating || isCreatingWord}
+          >
+            添加到生词簿
+          </Button>
+
+          <SpeakButton message={wordOriginal}>朗读</SpeakButton>
+
+          {'wordOriginal' in props && (
+            <Button
+              onClick={() => fetchSSE(sentenceOriginal, wordOriginal)}
+              size='sm'
+            >
+              <RotateCw
+                size={16}
+                className={`mr-2 ${isTranslating ? 'animate-spin' : ''}`}
+              />
+              翻译
+            </Button>
+          )}
+        </div>
+
+        <div className='mt-2'>
+          <Paragraph literal={literal} />
+        </div>
+      </div>
+    )
+  }
+  if ('word' in props) {
+    return Renderer({
+      wordOriginal: props.word.original,
+      literal: props.word.translation
+    })
+  }
+  const { sentenceOriginal, wordOriginal } = props
+
+  return Renderer({
+    wordOriginal,
+    literal: wordTranslationData
+  })
 }

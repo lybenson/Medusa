@@ -5,12 +5,13 @@ import { fetchSentences, updateSentence } from '@renderer/database/sentence'
 import { SentencesTable, WordsReturn } from '@schema'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { eq } from 'drizzle-orm'
-import { BadgeCheck, Trash2, Volume2 } from 'lucide-react'
+import { BadgeCheck } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Sheet, SheetContent } from '@renderer/components/ui/sheet'
 import { useToggle } from '@uidotdev/usehooks'
 import { useState } from 'react'
 import WordParaphrase from '@renderer/pages/word/word-paraphrase'
+import SpeakButton from '@renderer/components/speak-button'
 
 export default function SentenceList() {
   const navigate = useNavigate()
@@ -51,21 +52,23 @@ export default function SentenceList() {
               {sentence.translation}
             </div>
             <div className='flex justify-between items-center mt-4'>
-              <WordTags
-                words={sentence.words}
-                onClickWord={(word) => {
-                  setSelectedWord(word)
-                  toggleWordDetailOpen()
-                }}
-              />
-              <div className='flex gap-x-2'>
-                <Button
+              <div className='max-w-[80%]'>
+                <WordTags
+                  words={sentence.words}
+                  onClickWord={(word) => {
+                    setSelectedWord(word)
+                    toggleWordDetailOpen()
+                  }}
+                />
+              </div>
+
+              <div className='flex gap-x-2 items-center'>
+                <SpeakButton
+                  message={sentence.original}
                   variant='ghost'
                   className='p-0'
-                >
-                  <Volume2 size={16} />
-                </Button>
-                <Button
+                />
+                {/* <Button
                   variant='ghost'
                   className='p-0'
                   onClick={async () => {
@@ -80,12 +83,13 @@ export default function SentenceList() {
                   }}
                 >
                   <Trash2 size={16} />
-                </Button>
+                </Button> */}
 
                 <Button
                   variant='ghost'
                   className='p-0'
-                  onClick={async () => {
+                  onClick={async (e) => {
+                    e.stopPropagation()
                     await updateSentence(
                       {
                         ...sentence,
