@@ -58,8 +58,6 @@ export default function Chat() {
       })
       setSelectedText(selection.toString())
 
-      console.log('selectedText:', selectedText)
-
       toggleTextPopover(true)
     }
   }

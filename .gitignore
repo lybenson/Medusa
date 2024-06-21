@@ -28,5 +28,4 @@ build
 dist
 
 # Sqlite
-drizzle
 local-data.db

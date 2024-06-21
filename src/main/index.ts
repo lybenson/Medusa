@@ -55,10 +55,9 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  // ji异步消息
-  ipcMain.on('ping', () => console.log('pong'))
+  // 异步消息 ipcMain.on
 
-  // 同步消息
+  // 同步消息  ipcMain.handle
   ipcMain.handle('db:execute', execute)
   await runMigrate()
 

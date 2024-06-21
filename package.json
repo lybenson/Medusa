@@ -1,9 +1,9 @@
 {
   "name": "medusa-english",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "syen",
   "homepage": "https://electron-vite.org",
   "scripts": {
     "format": "prettier --write .",
@@ -74,5 +74,5 @@
     "typescript": "^5.4.5",
     "vite": "^5.2.13"
   },
-  "packageManager": "pnpm@9.2.0"
+  "packageManager": "pnpm@9.4.0"
 }

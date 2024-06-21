@@ -1,4 +1,4 @@
-appId: com.syen.medusa
+appId: com.electron.app
 productName: medusa-english
 directories:
   buildResources: build
@@ -9,6 +9,9 @@ files:
   - '!{.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+extraResources:
+  from: 'src/db/drizzle'
+  to: 'db/drizzle'
 asarUnpack:
   - resources/**
 win:

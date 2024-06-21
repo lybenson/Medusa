@@ -9,13 +9,13 @@ import { exit } from 'process'
 
 const dbPath = import.meta.env.DEV
   ? 'local-data.db'
-  : path.join(app.getPath('userData'), 'data.db')
+  : path.join(app.getPath('userData'), 'database/data.db')
 
 fs.mkdirSync(path.dirname(dbPath), { recursive: true })
 
-const sqlite = new Database(dbPath)
+const betterSqlite = new Database(dbPath)
 
-export const db = drizzle(sqlite, { schema })
+export const db = drizzle(betterSqlite, { schema })
 
 function toDrizzleResult(
   rows: Record<string, any> | Array<Record<string, any>>
@@ -33,20 +33,23 @@ function toDrizzleResult(
 }
 
 export const execute = async (_, sqlstr, params, method) => {
-  const result = sqlite.prepare(sqlstr)
+  const result = betterSqlite.prepare(sqlstr)
   const ret = result[method](...params)
   return toDrizzleResult(ret)
 }
 
 export const runMigrate = async () => {
+  const drizzlePath = import.meta.env.DEV
+    ? 'src/db/drizzle'
+    : path.join(process.resourcesPath, 'db/drizzle')
+
   try {
-    migrate(db, {
-      migrationsFolder: path.join(__dirname, '../../drizzle')
+    await migrate(db, {
+      migrationsFolder: drizzlePath
     })
   } catch (error) {
-    console.log(error)
-
-    console.error(`Have you run the command "pnpm db:generate"? Try it!`)
+    console.error(error)
+    console.error(`Have you run the command "pnpm db:generate"?`)
     exit(0)
   }
 }

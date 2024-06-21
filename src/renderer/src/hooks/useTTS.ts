@@ -68,8 +68,6 @@ export default function useTTS() {
       }
     }
     ws.onclose = () => {
-      console.log('closr ws')
-
       setIsFetching(false)
       setIsSpeaking(false)
     }

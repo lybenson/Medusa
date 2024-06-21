@@ -1,11 +1,10 @@
 import type { Config } from 'drizzle-kit'
-import path from 'path'
 
+// drizzle-kit commandline config:
+// 1. pnpx drizzle-kit generate
+// 2. pnpxdrizzle-kit migrate
 export default {
-  schema: './src/db/schema.ts',
+  schema: 'src/db/schema.ts',
   dialect: 'sqlite',
-  out: './drizzle',
-  dbCredentials: {
-    url: path.resolve(__dirname, './local-data.db')
-  }
+  out: 'src/db/drizzle'
 } satisfies Config
