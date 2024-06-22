@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: medusa-english
+appId: com.syen.medusa
+productName: Medusa
 directories:
   buildResources: build
 files:
@@ -15,7 +15,7 @@ extraResources:
 asarUnpack:
   - resources/**
 win:
-  executableName: medusa-english
+  executableName: Medusa
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
