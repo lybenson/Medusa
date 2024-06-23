@@ -4,6 +4,16 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      os:
+        description: 'Operating system'
+        required: true
+        default: 'macos-latest'
+        type: choice
+        options:
+          - 'macos-latest'
+          - 'windows-latest'
 
 env:
   pnpm: 9.4.0
