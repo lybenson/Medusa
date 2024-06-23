@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, is } from '@electron-toolkit/utils'
-import { execute, initDB, runMigrate } from './sqlite'
+import { execute, initDB } from './sqlite'
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
