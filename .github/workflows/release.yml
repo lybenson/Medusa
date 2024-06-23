@@ -2,18 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
-  workflow_dispatch:
-    inputs:
-      os:
-        description: 'Operating system'
-        required: true
-        default: 'macos-latest'
-        type: choice
-        options:
-          - 'macos-latest'
-          - 'windows-latest'
+    branches:
+      - master
 
 env:
   pnpm: 9.4.0
@@ -21,16 +11,7 @@ env:
 jobs:
   release:
     name: Release
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: macos-latest
-            arch: aarch64
-          - os: windows-latest
-            arch: x86_64
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -48,27 +29,13 @@ jobs:
         run: pnpm install
 
       - name: Release:MacOS
-        if: matrix.os == 'macos-latest'
         run: pnpm build:mac
-
-      - name: Release:Windows
-        if: matrix.os == 'windows-latest'
-        run: pnpm build:win
 
       - name: Release:Publish
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            dist/*.exe
-            dist/*.zip
             dist/*.dmg
-            dist/*.AppImage
-            dist/*.snap
-            dist/*.deb
-            dist/*.rpm
-            dist/*.tar.gz
-            dist/*.yml
-            dist/*.blockmap
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
