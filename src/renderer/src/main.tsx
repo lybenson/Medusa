@@ -4,14 +4,14 @@ import App from './App'
 // import { ThemeProvider } from './themeProvider'
 import { Toaster } from './components/ui/sonner'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter } from 'react-router-dom'
+import { HashRouter } from 'react-router-dom'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <div>
     <QueryClientProvider client={new QueryClient()}>
-      <BrowserRouter>
+      <HashRouter>
         <App />
-      </BrowserRouter>
+      </HashRouter>
     </QueryClientProvider>
     <Toaster />
   </div>

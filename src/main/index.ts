@@ -12,7 +12,7 @@ function createWindow() {
     titleBarStyle: 'hiddenInset',
     frame: false,
     webPreferences: {
-      devTools: is.dev,
+      devTools: true,
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
@@ -21,12 +21,12 @@ function createWindow() {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
-    return { action: 'allow' }
+    return { action: 'deny' }
   })
 
   // HMR for renderer base on electron-vite cli.
