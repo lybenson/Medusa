@@ -42,7 +42,7 @@ jobs:
         run: pnpm build:mac
 
       - name: Release:Windows
-        if: matrix.os == 'windows-latest'
+        if: matrix.os == 'macos-latest'
         run: pnpm build:win
 
       - name: Release:Publish
