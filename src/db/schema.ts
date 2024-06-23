@@ -9,15 +9,23 @@ export const SentencesTable = sqliteTable('sentences', {
   original: text('original').notNull().unique(),
   translation: text('translation').notNull(),
   grammar: text('grammar'),
+  groupId: integer('group_id'),
   learned: integer('learned', { mode: 'boolean' }).default(false),
   deleted: integer('deleted', { mode: 'boolean' }).default(false),
   createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
   updatedAt: text('updated_at').default(sql`(CURRENT_TIMESTAMP)`)
 })
 
-export const sentencesRelations = relations(SentencesTable, ({ many }) => ({
-  words: many(WordsTable)
-}))
+export const SentencesRelations = relations(
+  SentencesTable,
+  ({ one, many }) => ({
+    words: many(WordsTable),
+    group: one(SentencesTable, {
+      fields: [SentencesTable.groupId],
+      references: [SentencesTable.id]
+    })
+  })
+)
 
 export const WordsTable = sqliteTable(
   'words',
@@ -39,12 +47,28 @@ export const WordsTable = sqliteTable(
   }
 )
 
-export const wordsRelations = relations(WordsTable, ({ one }) => ({
+export const WordsSentenceRelations = relations(WordsTable, ({ one }) => ({
   sentence: one(SentencesTable, {
     fields: [WordsTable.sentenceId],
     references: [SentencesTable.id]
   })
 }))
+
+export const SentenceGroupTable = sqliteTable('sentence_group', {
+  id: integer('id', { mode: 'number' }).primaryKey({
+    autoIncrement: true
+  }),
+  name: text('name').notNull(),
+  createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
+  updatedAt: text('updated_at').default(sql`(CURRENT_TIMESTAMP)`)
+})
+
+export const sentenceGroupRelations = relations(
+  SentenceGroupTable,
+  ({ many }) => ({
+    sentences: many(SentencesTable)
+  })
+)
 
 export type SentencesReturn = typeof SentencesTable.$inferSelect
 export type WordsReturn = typeof WordsTable.$inferSelect
@@ -54,4 +78,9 @@ export type SentencesRelationReturn = SentencesReturn & {
 }
 export type WordsRelationReturn = WordsReturn & {
   sentence: SentencesReturn
+}
+
+export type SentenceGroupReturn = typeof SentenceGroupTable.$inferSelect
+export type SentenceGroupRelationReturn = SentenceGroupReturn & {
+  sentences: SentencesReturn[]
 }

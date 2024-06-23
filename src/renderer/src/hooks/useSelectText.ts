@@ -23,15 +23,13 @@ export const useSelectText = (
         left: rect.x + rect.width / 2,
         top: rect.y + rect.height + 5
       })
-      console.log(selection.toString())
 
       setSelectedText(selection.toString())
     }
   }
 
   useLayoutEffect(() => {
-    if (!selectableRef.current)
-      return console.log('selectableRef.current is null')
+    if (!selectableRef.current) return
 
     const selectableEle = selectableRef.current
 

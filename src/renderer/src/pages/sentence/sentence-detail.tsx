@@ -217,7 +217,6 @@ export default function SentenceDetail() {
             }
             content={translationData || sentence.translation || ''}
           />
-
           {sentence.words.length > 0 && (
             <SentenceSection
               title='生词'
@@ -333,7 +332,6 @@ export default function SentenceDetail() {
         open={textPopoverOpen}
         toggleOpen={toggleTextPopover}
         onTrigger={() => {
-          console.log('onTrigger')
           toggleWordDetailOpen(true)
         }}
       />

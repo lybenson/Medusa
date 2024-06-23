@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, is } from '@electron-toolkit/utils'
-import { execute, runMigrate } from './sqlite'
+import { execute, initDB, runMigrate } from './sqlite'
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -46,7 +46,7 @@ app.whenReady().then(async () => {
 
   // 同步消息  ipcMain.handle
   ipcMain.handle('db:execute', execute)
-  await runMigrate()
+  await initDB()
 
   createWindow()
 
