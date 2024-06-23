@@ -26,7 +26,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest]
+        include:
+          - os: macos-latest
+            arch: arm64
+          - os: windows-latest
+            arch: x86_64
     steps:
       - uses: actions/checkout@v4
 
