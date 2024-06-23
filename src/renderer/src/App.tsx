@@ -21,9 +21,13 @@ export default function App() {
                   key={route.path}
                   path={route.path}
                   element={
-                    <KeepAlive activeName={route.path}>
-                      {route.component}
-                    </KeepAlive>
+                    route.keepAlive ? (
+                      <KeepAlive activeName={route.path}>
+                        {route.component}
+                      </KeepAlive>
+                    ) : (
+                      route.component
+                    )
                   }
                 >
                   {route.children?.map((childRoute) => {
@@ -32,9 +36,13 @@ export default function App() {
                         key={childRoute.path}
                         path={childRoute.path}
                         element={
-                          <KeepAlive activeName={childRoute.path}>
-                            {childRoute.component}
-                          </KeepAlive>
+                          childRoute.keepAlive ? (
+                            <KeepAlive activeName={childRoute.path}>
+                              {childRoute.component}
+                            </KeepAlive>
+                          ) : (
+                            childRoute.component
+                          )
                         }
                       />
                     )
@@ -44,7 +52,7 @@ export default function App() {
             })}
 
             <Route
-              path='/'
+              path='*'
               element={
                 <Navigate
                   to='/chat'

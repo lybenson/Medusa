@@ -1,11 +1,9 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { electronApp, is } from '@electron-toolkit/utils'
 import { execute, runMigrate } from './sqlite'
-// import icon from '../../resources/icon.webp?asset'
 
-function createWindow(): void {
-  // Create the browser window.
+function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1500,
     height: 900,
@@ -19,17 +17,16 @@ function createWindow(): void {
       sandbox: false
     }
   })
-  mainWindow.webContents.send('ping', 'hello')
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
 
-    is.dev && mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
-    return { action: 'deny' }
+    return { action: 'allow' }
   })
 
   // HMR for renderer base on electron-vite cli.
@@ -41,19 +38,9 @@ function createWindow(): void {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
-
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
-  app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
 
   // 异步消息 ipcMain.on
 

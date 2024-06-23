@@ -20,8 +20,11 @@ import { SentencesTable, WordsReturn } from '@schema'
 import { PopoverArrow } from '@radix-ui/react-popover'
 import WordTags from '@renderer/components/word-tags'
 import { Sheet, SheetContent } from '@renderer/components/ui/sheet'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import WordParaphrase from '@renderer/pages/word/word-paraphrase'
+import SpeakButton from '@renderer/components/speak-button'
+import TextPopover from '@renderer/components/text-popover'
+import { useSelectText } from '@renderer/hooks/useSelectText'
 
 export default function SentenceDetail() {
   const { id } = useParams()
@@ -86,7 +89,31 @@ export default function SentenceDetail() {
   const [isGrammarReplaceOpen, toggleGrammarReplaceOpen] = useToggle(false)
 
   const [wordDetailOpen, toggleWordDetailOpen] = useToggle()
-  const [selectedWord, setSelectedWord] = useState<WordsReturn>()
+  const [selectedWord, setSelectedWord] = useState<
+    WordsReturn | { sentenceOriginal: string; wordOriginal: string }
+  >()
+
+  const [isRednered, setIsRendered] = useState(false)
+  const selectableRef = useRef<HTMLDivElement>(null)
+  const { selectedText, popoverPosition } = useSelectText(
+    selectableRef,
+    isRednered
+  )
+  useEffect(() => {
+    if (sentence && !isRednered) {
+      setIsRendered(true)
+    }
+  }, [sentence, isRednered])
+  const [textPopoverOpen, toggleTextPopover] = useToggle(false)
+  useEffect(() => {
+    if (selectedText) {
+      toggleTextPopover(true)
+      setSelectedWord({
+        sentenceOriginal: sentence?.original || '',
+        wordOriginal: selectedText
+      })
+    }
+  }, [selectedText])
 
   return (
     <div className='h-full'>
@@ -101,8 +128,20 @@ export default function SentenceDetail() {
       {sentence && (
         <div className='px-4'>
           <SentenceSection
-            title='原文'
-            content={sentence.original || ''}
+            title={
+              <div className='flex items-center gap-x-3'>
+                <span>原文</span>
+                <SpeakButton
+                  variant='secondary'
+                  size='sm'
+                  className='ml-1'
+                  message={sentence.original || ''}
+                >
+                  朗读
+                </SpeakButton>
+              </div>
+            }
+            content={<div ref={selectableRef}>{sentence.original || ''}</div>}
           />
 
           <SentenceSection
@@ -179,18 +218,20 @@ export default function SentenceDetail() {
             content={translationData || sentence.translation || ''}
           />
 
-          <SentenceSection
-            title='生词'
-            content={
-              <WordTags
-                words={sentence.words}
-                onClickWord={(word) => {
-                  setSelectedWord(word)
-                  toggleWordDetailOpen()
-                }}
-              />
-            }
-          />
+          {sentence.words.length > 0 && (
+            <SentenceSection
+              title='生词'
+              content={
+                <WordTags
+                  words={sentence.words}
+                  onClickWord={(word) => {
+                    setSelectedWord(word)
+                    toggleWordDetailOpen()
+                  }}
+                />
+              }
+            />
+          )}
 
           <SentenceSection
             title={
@@ -275,9 +316,27 @@ export default function SentenceDetail() {
         onOpenChange={toggleWordDetailOpen}
       >
         <SheetContent className='overflow-auto pt-14'>
-          {selectedWord && <WordParaphrase word={selectedWord} />}
+          {selectedWord && (
+            <WordParaphrase
+              word={selectedWord}
+              onCreated={() => {
+                refetch()
+              }}
+            />
+          )}
         </SheetContent>
       </Sheet>
+
+      <TextPopover
+        left={popoverPosition.left}
+        top={popoverPosition.top}
+        open={textPopoverOpen}
+        toggleOpen={toggleTextPopover}
+        onTrigger={() => {
+          console.log('onTrigger')
+          toggleWordDetailOpen(true)
+        }}
+      />
     </div>
   )
 }

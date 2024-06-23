@@ -15,6 +15,7 @@ export type RouteItem = {
   component: React.ReactNode
   icon?: React.ReactNode
   isMenu: boolean
+  keepAlive?: boolean
   text: string
   children?: RouteItem[]
 }
@@ -25,6 +26,7 @@ export const routes: RouteItem[] = [
     component: <Chat />,
     text: 'Chat',
     isMenu: true,
+    keepAlive: true,
     icon: <MessageCircleQuestion size={18} />
   },
   {

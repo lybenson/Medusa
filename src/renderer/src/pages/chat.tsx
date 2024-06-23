@@ -224,8 +224,10 @@ export default function Chat() {
           // onInteractOutside={(e) => e.preventDefault()}
         >
           <WordParaphrase
-            wordOriginal={selectedText}
-            sentenceOriginal={inputValue}
+            word={{
+              wordOriginal: selectedText,
+              sentenceOriginal: inputValue
+            }}
           />
         </SheetContent>
       </Sheet>

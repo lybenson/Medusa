@@ -10,15 +10,20 @@ import { WordsReturn } from '@schema'
 import { RotateCw } from 'lucide-react'
 import SpeakButton from '@renderer/components/speak-button'
 
-type WordParaphraseProps =
-  | {
-      sentenceOriginal: string
-      wordOriginal: string
-    }
-  | {
-      word: WordsReturn
-    }
-export default function WordParaphrase(props: WordParaphraseProps) {
+type WordParaphraseProps = {
+  word:
+    | WordsReturn
+    | {
+        sentenceOriginal: string
+        wordOriginal: string
+      }
+  onCreated?: () => void
+}
+
+export default function WordParaphrase({
+  word,
+  onCreated
+}: WordParaphraseProps) {
   const {
     fetchSSE,
     data: wordTranslationData,
@@ -33,13 +38,13 @@ export default function WordParaphrase(props: WordParaphraseProps) {
   } = useMutation({
     mutationKey: [
       'createWord',
-      'word' in props ? props.word.original : props.wordOriginal
+      'id' in word ? word.original : word.wordOriginal
     ],
     mutationFn: insertWord
   })
 
   useEffect(() => {
-    if ('wordOriginal' in props) fetchSSE(sentenceOriginal, wordOriginal)
+    if ('wordOriginal' in word) fetchSSE(sentenceOriginal, wordOriginal)
   }, [])
 
   const handleInsertWord = async () => {
@@ -58,6 +63,7 @@ export default function WordParaphrase(props: WordParaphraseProps) {
         sentenceId: sentence.id
       })
       toast.success('添加成功')
+      onCreated?.()
     } catch (error) {
       toast.error('添加失败')
     }
@@ -74,15 +80,17 @@ export default function WordParaphrase(props: WordParaphraseProps) {
       <div className='overflow-auto '>
         <div className='flex items-center '>
           <SpeakButton message={wordOriginal}>朗读</SpeakButton>
-          <Button
-            size='sm'
-            className='mr-2'
-            onClick={() => handleInsertWord()}
-            disabled={isTranslating || isCreatingWord}
-          >
-            添加到生词簿
-          </Button>
-          {'wordOriginal' in props && (
+          {!('id' in word) && (
+            <Button
+              size='sm'
+              className='mr-2'
+              onClick={() => handleInsertWord()}
+              disabled={isTranslating || isCreatingWord}
+            >
+              添加到生词簿
+            </Button>
+          )}
+          {'wordOriginal' in word && (
             <Button
               onClick={() => fetchSSE(sentenceOriginal, wordOriginal)}
               size='sm'
@@ -103,13 +111,13 @@ export default function WordParaphrase(props: WordParaphraseProps) {
       </div>
     )
   }
-  if ('word' in props) {
+  if ('id' in word) {
     return Renderer({
-      wordOriginal: props.word.original,
-      literal: props.word.translation
+      wordOriginal: word.original,
+      literal: word.translation
     })
   }
-  const { sentenceOriginal, wordOriginal } = props
+  const { sentenceOriginal, wordOriginal } = word
 
   return Renderer({
     wordOriginal,

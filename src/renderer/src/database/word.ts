@@ -2,7 +2,7 @@ import {
   SQLiteInsertValue,
   SQLiteUpdateSetSource
 } from 'drizzle-orm/sqlite-core'
-import { eq, ne, SQL } from 'drizzle-orm'
+import { desc, eq, ne, SQL } from 'drizzle-orm'
 import { WordsTable } from '@schema'
 import { db } from '.'
 import { PER_PAGE } from '@renderer/constants'
@@ -14,6 +14,7 @@ export const fetchWords = (limit = PER_PAGE, offset = 0) => {
     with: {
       sentence: true
     },
+    orderBy: [desc(WordsTable.updatedAt)],
     where: ne(WordsTable.deleted, true)
   })
 }
