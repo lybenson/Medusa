@@ -3,8 +3,15 @@ import AppHeader from './components/app-header'
 import Sidebar from './components/sidebar'
 import { routes } from './routes'
 import KeepAlive from 'keepalive-for-react'
+import { useGlobalStore } from './store'
+import { useEffect } from 'react'
 
 export default function App() {
+  const requestGroups = useGlobalStore((state) => state.requestGroups)
+
+  useEffect(() => {
+    requestGroups()
+  }, [])
   return (
     <div className='flex flex-col h-screen max-h-screen'>
       <AppHeader />

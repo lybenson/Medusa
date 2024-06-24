@@ -1,10 +1,8 @@
 import {
   deleteSentenceGroup,
-  fetchSentencesGroup,
   insertSentenceGroup,
   updateSentenceGroup
 } from '@renderer/database/sentence-group'
-import { useQuery } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import SentenceList from './sentence-list'
 import { Ellipsis, Plus } from 'lucide-react'
@@ -38,11 +36,9 @@ import {
 import { useGlobalStore } from '@renderer/store'
 
 export default function SentenceGroupHome() {
-  const { data: groups, refetch } = useQuery({
-    queryKey: ['sentenceGroupHome'],
-    queryFn: () => fetchSentencesGroup(),
-    enabled: true
-  })
+  const groups = useGlobalStore((state) => state.groups)
+  const requestGroups = useGlobalStore((state) => state.requestGroups)
+
   const [dialogMode, setDialogMode] = useState<'edit' | 'add'>('edit')
   const [editGroup, setEditGroup] = useState<SentenceGroupsReturn>()
   const [groupDialog, toggleGroupDialogOpen] = useToggle()
@@ -67,13 +63,13 @@ export default function SentenceGroupHome() {
         },
         eq(SentenceGroupsTable.id, editGroup?.id)
       )
-      refetch()
+      requestGroups()
       toggleGroupDialogOpen(false)
     } else {
       await insertSentenceGroup({
         name: inputGroupName
       })
-      refetch()
+      requestGroups()
       toggleGroupDialogOpen(false)
     }
   }
@@ -190,7 +186,7 @@ export default function SentenceGroupHome() {
                   selectedGroup && eq(SentenceGroupsTable.id, selectedGroup.id)
                 )
                 toggleDeleteConfimDialog(false)
-                refetch()
+                requestGroups()
               }}
             >
               Confirm

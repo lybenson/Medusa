@@ -3,7 +3,14 @@ import { Textarea } from '@renderer/components/ui/textarea'
 import { insertSentence } from '@renderer/database/sentence'
 import { useChatApi } from '@renderer/hooks/useChatApi'
 import { useMutation } from '@tanstack/react-query'
-import { Aperture, BarChart, Loader, Star } from 'lucide-react'
+import {
+  Aperture,
+  BarChart,
+  Check,
+  ChevronsUpDown,
+  Loader,
+  Star
+} from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import SentenceGrammar from './sentence/sentence-grammar'
@@ -13,9 +20,26 @@ import { useToggle } from '@uidotdev/usehooks'
 import { Sheet, SheetContent } from '@renderer/components/ui/sheet'
 import WordParaphrase from './word/word-paraphrase'
 import SpeakButton from '@renderer/components/speak-button'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger
+} from '@renderer/components/ui/popover'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from '@renderer/components/ui/command'
+import { useGlobalStore } from '@renderer/store'
+import { cn } from '@renderer/lib/utils'
+import { SentenceGroupsReturn } from '@schema'
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState('')
+  const groups = useGlobalStore((state) => state.groups)
 
   const {
     fetchSSE: fetchTranslate,
@@ -91,6 +115,9 @@ export default function Chat() {
     toggleSheetOpen(true)
   }
 
+  const [selectedGroup, setSelectedGroup] = useState<SentenceGroupsReturn>()
+  const [selectGroupOpen, toggleSelectGroupOpen] = useToggle(false)
+
   return (
     <div className='relative p-4'>
       <Textarea
@@ -109,9 +136,73 @@ export default function Chat() {
           }
         }}
       />
-      <div className='flex justify-between'>
+      <div className='flex justify-between items-center'>
         <div></div>
-        <div>
+        <div className='flex items-center'>
+          <Popover
+            open={selectGroupOpen}
+            onOpenChange={toggleSelectGroupOpen}
+          >
+            <PopoverTrigger asChild>
+              <Button
+                variant='outline'
+                role='combobox'
+                className='w-40 justify-between h-8 mr-2 flex'
+              >
+                <span className='truncate'>
+                  {selectedGroup
+                    ? groups.find((group) => group.name === selectedGroup.name)
+                        ?.name
+                    : 'Select Group'}
+                </span>
+                <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent className='w-fit p-0'>
+              <Command>
+                <CommandInput
+                  placeholder='Search framework...'
+                  className='h-8'
+                />
+                <CommandList>
+                  <CommandEmpty>No framework found.</CommandEmpty>
+                  <CommandGroup>
+                    {groups.map((group) => (
+                      <CommandItem
+                        key={group.id}
+                        value={group.name}
+                        onSelect={(currentValue) => {
+                          console.log(currentValue)
+                          const group = groups.find(
+                            (group) => group.name === currentValue
+                          )
+
+                          setSelectedGroup(
+                            currentValue === selectedGroup?.name
+                              ? undefined
+                              : group
+                          )
+                          toggleSelectGroupOpen(false)
+                        }}
+                      >
+                        <span className='truncate'>{group.name}</span>
+                        <Check
+                          className={cn(
+                            'ml-auto h-4 w-4 shrink-0',
+                            selectedGroup?.name === group.name
+                              ? 'opacity-100'
+                              : 'opacity-0'
+                          )}
+                        />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
           <SpeakButton message={inputValue}>朗读</SpeakButton>
           <Button
             size='sm'
@@ -157,16 +248,19 @@ export default function Chat() {
               isTranslating || isAnalyzing || !translationData || !grammarData
             }
             onClick={async () => {
+              if (!selectedGroup) return toast.error('请选择一个组')
               try {
                 await createSentence({
                   original: inputValue,
                   translation: translationData,
-                  grammar: grammarData
+                  grammar: grammarData,
+                  groupId: selectedGroup.id
                 })
                 toast.success('添加到备忘录成功')
               } catch (error) {
                 toast.error('添加到备忘录失败')
               }
+              return null
             }}
           >
             {isCreatingSentence ? (
