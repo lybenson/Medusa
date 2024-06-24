@@ -1,8 +1,11 @@
 import { Button } from '@renderer/components/ui/button'
 import WordTags from '@renderer/components/word-tags'
 import { PER_PAGE } from '@renderer/constants'
-import { fetchSentences, updateSentence } from '@renderer/database/sentence'
-import { SentencesTable, WordsReturn } from '@schema'
+import {
+  fetchSentencesByGroup,
+  updateSentence
+} from '@renderer/database/sentence'
+import { SentenceGroupsReturn, SentencesTable, WordsReturn } from '@schema'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { eq } from 'drizzle-orm'
 import { BadgeCheck } from 'lucide-react'
@@ -13,18 +16,24 @@ import { useState } from 'react'
 import WordParaphrase from '@renderer/pages/word/word-paraphrase'
 import SpeakButton from '@renderer/components/speak-button'
 
-export default function SentenceList() {
+export default function SentenceList({
+  group
+}: {
+  group?: SentenceGroupsReturn
+}) {
   const navigate = useNavigate()
   const { data, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
-    queryKey: ['sentenceList'],
+    queryKey: ['sentenceList', group?.id],
     queryFn: ({ pageParam }) => {
-      return fetchSentences(PER_PAGE, PER_PAGE * pageParam)
+      return fetchSentencesByGroup(group?.id, PER_PAGE, PER_PAGE * pageParam)
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.length === PER_PAGE ? allPages.length : undefined
-    }
+    },
+    enabled: !!group
   })
+  console.log(group?.id)
 
   const sentenceList = data?.pages.map((page) => page).flat()
 
@@ -34,7 +43,7 @@ export default function SentenceList() {
   return (
     <div>
       <h1 className='scroll-m-20 text-4xl font-bold tracking-tight'>
-        Sentence List
+        {group?.name}
       </h1>
       <div className='flex flex-col gap-y-3 mt-4'>
         {sentenceList?.map((sentence) => (

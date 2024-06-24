@@ -116,7 +116,7 @@ export default function SentenceDetail() {
   }, [selectedText])
 
   return (
-    <div className='h-full'>
+    <div className='h-full p-1'>
       <Button
         onClick={() => navigate(-1)}
         variant='ghost'

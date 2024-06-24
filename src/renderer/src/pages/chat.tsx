@@ -92,7 +92,7 @@ export default function Chat() {
   }
 
   return (
-    <div className='relative'>
+    <div className='relative p-4'>
       <Textarea
         id='selectable'
         className='min-h-32 mb-4 text-base'

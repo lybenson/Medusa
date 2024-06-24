@@ -13,7 +13,7 @@ export default function App() {
         <div className='w-60 flex-shrink-0 border-r bg-neutral-100'>
           <Sidebar />
         </div>
-        <div className='flex-1 px-4 pt-4 pb-8 overflow-scroll'>
+        <div className='flex-1 overflow-scroll'>
           <Routes>
             {routes.map((route) => {
               return (

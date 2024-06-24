@@ -35,6 +35,8 @@ function toDrizzleResult(
 
 export const execute = async (_, sqlstr, params, method) => {
   const result = betterSqlite.prepare(sqlstr)
+  console.log(sqlstr)
+
   const ret = result[method](...params)
   return toDrizzleResult(ret)
 }
@@ -43,12 +45,12 @@ export const initDB = async () => {
   await runMigrate()
 
   // create default group
-  const defaultGroup = await db.query.SentenceGroupTable.findFirst({
-    where: eq(schema.SentenceGroupTable.id, 1)
+  const defaultGroup = await db.query.SentenceGroupsTable.findFirst({
+    where: eq(schema.SentenceGroupsTable.id, 1)
   })
 
   if (!defaultGroup) {
-    await db.insert(schema.SentenceGroupTable).values({
+    await db.insert(schema.SentenceGroupsTable).values({
       name: 'Default'
     })
   }

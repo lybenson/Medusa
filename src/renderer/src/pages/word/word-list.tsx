@@ -19,7 +19,7 @@ export default function WordList() {
   const wordList = data?.pages.map((page) => page).flat()
 
   return (
-    <div>
+    <div className='p-4'>
       <h1 className='scroll-m-20 text-4xl font-bold tracking-tight'>
         Word List
       </h1>

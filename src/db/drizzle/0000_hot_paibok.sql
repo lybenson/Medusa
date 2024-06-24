@@ -1,8 +1,16 @@
+CREATE TABLE `sentence_groups` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`name` text NOT NULL,
+	`created_at` text DEFAULT (CURRENT_TIMESTAMP),
+	`updated_at` text DEFAULT (CURRENT_TIMESTAMP)
+);
+--> statement-breakpoint
 CREATE TABLE `sentences` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`original` text NOT NULL,
 	`translation` text NOT NULL,
 	`grammar` text,
+	`group_id` integer DEFAULT 1,
 	`learned` integer DEFAULT false,
 	`deleted` integer DEFAULT false,
 	`created_at` text DEFAULT (CURRENT_TIMESTAMP),

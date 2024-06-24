@@ -1,5 +1,6 @@
 import Chat from '@renderer/pages/chat'
 import SentenceDetail from '@renderer/pages/sentence/sentence-detail'
+import SentenceGroupHome from '@renderer/pages/sentence/sentence-group-home'
 import SentenceList from '@renderer/pages/sentence/sentence-list'
 import WordList from '@renderer/pages/word/word-list'
 import { MessageCircleQuestion, Swords, Trophy } from 'lucide-react'
@@ -31,7 +32,7 @@ export const routes: RouteItem[] = [
   },
   {
     path: 'sentence-list',
-    component: <SentenceList />,
+    component: <SentenceGroupHome />,
     text: 'Sentence List',
     isMenu: true,
     icon: <Trophy size={18} />
