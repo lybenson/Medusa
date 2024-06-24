@@ -28,13 +28,9 @@ export default function App() {
                   key={route.path}
                   path={route.path}
                   element={
-                    route.keepAlive ? (
-                      <KeepAlive activeName={route.path}>
-                        {route.component}
-                      </KeepAlive>
-                    ) : (
-                      route.component
-                    )
+                    <KeepAlive activeName={route.path}>
+                      {route.component}
+                    </KeepAlive>
                   }
                 >
                   {route.children?.map((childRoute) => {

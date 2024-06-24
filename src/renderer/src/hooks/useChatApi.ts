@@ -12,7 +12,15 @@ export const useChatApi = (action: Action) => {
   const [data, setData] = useState('')
   const [isFetching, setIsFetching] = useState(false)
 
-  const fetchSSE = async (sentence?: string, word?: string) => {
+  const fetchSSE = async ({
+    sentence,
+    word,
+    chinese
+  }: {
+    sentence: string
+    word?: string
+    chinese?: string
+  }) => {
     if (isFetching) return
     let messages: Message[] = []
     if (action === 'word') {
@@ -21,6 +29,9 @@ export const useChatApi = (action: Action) => {
     } else if (action === 'translate' || action === 'analyze') {
       if (!sentence) return
       messages = actions[action](sentence)
+    } else if (action === 'correct') {
+      if (!sentence) return
+      messages = actions[action](sentence, chinese)
     }
 
     // or return new Error(), not toast.error()

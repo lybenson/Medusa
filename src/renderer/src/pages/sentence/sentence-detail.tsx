@@ -149,7 +149,11 @@ export default function SentenceDetail() {
               <div className='flex items-center gap-x-3'>
                 <span>译文</span>
                 <Button
-                  onClick={() => fetchTranslate(sentence.original)}
+                  onClick={() =>
+                    fetchTranslate({
+                      sentence: sentence.original
+                    })
+                  }
                   variant='ghost'
                   className='p-0 ml-1 hover:bg-transparent'
                 >
@@ -237,7 +241,11 @@ export default function SentenceDetail() {
               <div className='flex items-center gap-x-3'>
                 <span>语法分析</span>
                 <Button
-                  onClick={() => fetchAnalyse(sentence.original)}
+                  onClick={() =>
+                    fetchAnalyse({
+                      sentence: sentence.original
+                    })
+                  }
                   variant='ghost'
                   className='p-0 ml-1 hover:bg-transparent'
                 >

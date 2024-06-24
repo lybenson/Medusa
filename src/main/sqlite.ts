@@ -35,7 +35,6 @@ function toDrizzleResult(
 
 export const execute = async (_, sqlstr, params, method) => {
   const result = betterSqlite.prepare(sqlstr)
-  console.log(sqlstr)
 
   const ret = result[method](...params)
   return toDrizzleResult(ret)

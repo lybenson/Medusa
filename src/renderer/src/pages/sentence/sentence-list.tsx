@@ -41,6 +41,7 @@ export default function SentenceList({
           <SentenceItem
             sentence={sentence}
             onRefetch={refetch}
+            key={sentence.id}
             onSelectedWord={(word) => {
               setSelectedWord(word)
               toggleWordDetailOpen(true)

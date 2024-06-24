@@ -42,9 +42,12 @@ export default function WordParaphrase({
     ],
     mutationFn: insertWord
   })
-
   useEffect(() => {
-    if ('wordOriginal' in word) fetchSSE(sentenceOriginal, wordOriginal)
+    if ('wordOriginal' in word)
+      fetchSSE({
+        sentence: sentenceOriginal,
+        word: wordOriginal
+      })
   }, [])
 
   const handleInsertWord = async () => {
@@ -92,7 +95,12 @@ export default function WordParaphrase({
           )}
           {'wordOriginal' in word && (
             <Button
-              onClick={() => fetchSSE(sentenceOriginal, wordOriginal)}
+              onClick={() =>
+                fetchSSE({
+                  sentence: sentenceOriginal,
+                  word: wordOriginal
+                })
+              }
               size='sm'
               disabled={isTranslating || !wordOriginal}
             >

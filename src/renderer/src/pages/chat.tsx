@@ -131,7 +131,9 @@ export default function Chat() {
             if (e.shiftKey) return
             else {
               e.preventDefault()
-              fetchTranslate(inputValue)
+              fetchTranslate({
+                sentence: inputValue
+              })
             }
           }
         }}
@@ -162,11 +164,11 @@ export default function Chat() {
             <PopoverContent className='w-fit p-0'>
               <Command>
                 <CommandInput
-                  placeholder='Search framework...'
+                  placeholder='Search group...'
                   className='h-8'
                 />
                 <CommandList>
-                  <CommandEmpty>No framework found.</CommandEmpty>
+                  <CommandEmpty>No group found.</CommandEmpty>
                   <CommandGroup>
                     {groups.map((group) => (
                       <CommandItem
@@ -207,7 +209,7 @@ export default function Chat() {
           <Button
             size='sm'
             className='mr-2'
-            onClick={() => fetchTranslate(inputValue)}
+            onClick={() => fetchTranslate({ sentence: inputValue })}
             disabled={isTranslating || !inputValue}
           >
             {isTranslating ? (
@@ -226,7 +228,7 @@ export default function Chat() {
           <Button
             size='sm'
             className='mr-2'
-            onClick={() => fetchAnalyse(inputValue)}
+            onClick={() => fetchAnalyse({ sentence: inputValue })}
             disabled={isAnalyzing || !inputValue}
           >
             {isAnalyzing ? (

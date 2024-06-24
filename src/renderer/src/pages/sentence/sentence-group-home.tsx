@@ -130,15 +130,18 @@ export default function SentenceGroupHome() {
         ))}
 
         <Button
-          className='h-10 flex items-center cursor-pointer text-neutral-700 justify-center w-full'
+          className='flex items-center cursor-pointer text-neutral-700 justify-center w-full'
           variant='ghost'
           onClick={() => {
             setDialogMode('add')
             toggleGroupDialogOpen(true)
           }}
         >
-          <Plus />
-          <span>New Group</span>
+          <Plus
+            size={16}
+            className='mr-2'
+          />
+          <span className='text-sm'>New Group</span>
         </Button>
       </div>
       <div className='flex-1 max-h-full first-line:overflow-scroll px-4'>

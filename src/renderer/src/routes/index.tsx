@@ -1,15 +1,21 @@
 import Chat from '@renderer/pages/chat'
+import Correct from '@renderer/pages/correct'
 import SentenceDetail from '@renderer/pages/sentence/sentence-detail'
 import SentenceGroupHome from '@renderer/pages/sentence/sentence-group-home'
-import SentenceList from '@renderer/pages/sentence/sentence-list'
 import WordList from '@renderer/pages/word/word-list'
-import { MessageCircleQuestion, Swords, Trophy } from 'lucide-react'
+import {
+  MessageCircleQuestion,
+  SpellCheck2,
+  Swords,
+  Trophy
+} from 'lucide-react'
 
 export type RoutePath =
   | 'chat'
   | 'sentence-list'
   | 'word-list'
   | 'sentence-list/:id'
+  | 'correct'
 
 export type RouteItem = {
   path: RoutePath | ':id'
@@ -49,5 +55,13 @@ export const routes: RouteItem[] = [
     text: 'Word List',
     isMenu: true,
     icon: <Swords size={18} />
+  },
+  {
+    path: 'correct',
+    component: <Correct />,
+    text: 'Correct',
+    isMenu: true,
+    keepAlive: true,
+    icon: <SpellCheck2 size={18} />
   }
 ]
