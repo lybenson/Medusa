@@ -11,10 +11,11 @@ export default function Correct() {
   const {
     fetchSSE: fetchCorrect,
     data: correctData,
-    isFetching
+    isFetching: correcting
   } = useChatApi('correct')
+
   return (
-    <div className='p-2'>
+    <div className='p-4'>
       <Textarea
         id='selectable'
         className='min-h-20 mb-4 text-base'
@@ -34,20 +35,18 @@ export default function Correct() {
       />
       <Button
         className=''
-        onClick={() =>
+        onClick={() => {
           fetchCorrect({
             sentence: englishInputValue,
             chinese: chineseInputValue
           })
-        }
-        disabled={isFetching || !englishInputValue}
+        }}
+        disabled={correcting || !englishInputValue}
       >
-        {isFetching && (
-          <RotateCw
-            size={18}
-            className='animate-spin mr-2'
-          />
-        )}
+        <RotateCw
+          size={16}
+          className={`mr-2 ${correcting ? 'animate-spin' : ''}`}
+        />
         纠错
       </Button>
 
