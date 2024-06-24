@@ -9,7 +9,7 @@ export const SentencesTable = sqliteTable('sentences', {
   original: text('original').notNull().unique(),
   translation: text('translation').notNull(),
   grammar: text('grammar'),
-  groupId: integer('group_id'),
+  groupId: integer('group_id').default(1),
   learned: integer('learned', { mode: 'boolean' }).default(false),
   deleted: integer('deleted', { mode: 'boolean' }).default(false),
   createdAt: text('created_at').default(sql`(CURRENT_TIMESTAMP)`),
