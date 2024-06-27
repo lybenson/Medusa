@@ -14,7 +14,7 @@ export default function useTTS() {
 
     const speechConfig = `X-Timestamp:${new Date().toISOString()}\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n{"context":{"synthesis":{"audio":{"metadataoptions":{"sentenceBoundaryEnabled":"false","wordBoundaryEnabled":"true"},"outputFormat":"audio-24khz-48kbitrate-mono-mp3"}}}}`
 
-    const ssmlVoice = 'zh-CN-XiaoxiaoNeural'
+    const ssmlVoice = 'en-US-JennyNeural'
     const ssmlProsody = {
       pitch: '+0Hz',
       rate: '1',
