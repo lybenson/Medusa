@@ -23,8 +23,16 @@ export const useSelectText = (
         left: rect.x + rect.width / 2,
         top: rect.y + rect.height + 5
       })
+      const trimedSelectedText = selection.toString().trim()
 
-      setSelectedText(selection.toString())
+      if (trimedSelectedText) {
+        console.log(`Selected text: ${trimedSelectedText}`)
+
+        setSelectedText(
+          trimedSelectedText.charAt(0).toLowerCase() +
+            trimedSelectedText.slice(1)
+        )
+      }
     }
   }
 

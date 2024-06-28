@@ -12,6 +12,8 @@ export const useChatApi = (action: Action) => {
   const [data, setData] = useState('')
   const [isFetching, setIsFetching] = useState(false)
 
+  const [cachedData, setCachedData] = useState<Map<string, string>>(new Map())
+
   const fetchSSE = async ({
     sentence,
     word,
@@ -75,6 +77,14 @@ export const useChatApi = (action: Action) => {
           received += json.choices[0].delta?.content || ''
 
           setData(received)
+
+          if (action === 'translate' || action === 'analyze') {
+            setCachedData((prev) => {
+              const newMap = new Map(prev)
+              newMap.set(sentence, received)
+              return newMap
+            })
+          }
         })
       }
       setIsFetching(false)
@@ -89,6 +99,7 @@ export const useChatApi = (action: Action) => {
     fetchSSE,
     isFetching,
     data,
-    resetData
+    resetData,
+    cachedData
   }
 }

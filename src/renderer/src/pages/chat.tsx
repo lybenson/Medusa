@@ -41,21 +41,26 @@ export default function Chat() {
   const [inputValue, setInputValue] = useState('')
   const groups = useGlobalStore((state) => state.groups)
 
+  const [trimedInputValue, setTrimedInputValue] = useState('')
+  useEffect(() => {
+    setTrimedInputValue(inputValue.trim())
+  }, [inputValue])
+
   const {
     fetchSSE: fetchTranslate,
-    data: translationData,
+    cachedData: translationCachedData,
     isFetching: isTranslating
   } = useChatApi('translate')
 
   const {
     fetchSSE: fetchAnalyse,
-    data: grammarData,
+    cachedData: grammarCachedData,
     isFetching: isAnalyzing
   } = useChatApi('analyze')
 
   const { mutateAsync: createSentence, isPending: isCreatingSentence } =
     useMutation({
-      mutationKey: ['createSentence', inputValue],
+      mutationKey: ['createSentence', trimedInputValue],
       mutationFn: insertSentence
     })
 
@@ -80,9 +85,17 @@ export default function Chat() {
         left: rect.x + rect.width / 2,
         top: rect.y + rect.height + 5
       })
-      setSelectedText(selection.toString())
+      const trimedSelectedText = selection.toString().trim()
 
-      toggleTextPopover(true)
+      if (trimedSelectedText) {
+        console.log(`Selected text: ${trimedSelectedText}`)
+
+        setSelectedText(
+          trimedSelectedText.charAt(0).toLowerCase() +
+            trimedSelectedText.slice(1)
+        )
+        toggleTextPopover(true)
+      }
     }
   }
 
@@ -132,7 +145,7 @@ export default function Chat() {
             else {
               e.preventDefault()
               fetchTranslate({
-                sentence: inputValue
+                sentence: trimedInputValue
               })
             }
           }
@@ -205,12 +218,12 @@ export default function Chat() {
             </PopoverContent>
           </Popover>
 
-          <SpeakButton message={inputValue}>朗读</SpeakButton>
+          <SpeakButton message={trimedInputValue}>朗读</SpeakButton>
           <Button
             size='sm'
             className='mr-2'
-            onClick={() => fetchTranslate({ sentence: inputValue })}
-            disabled={isTranslating || !inputValue}
+            onClick={() => fetchTranslate({ sentence: trimedInputValue })}
+            disabled={isTranslating || !trimedInputValue}
           >
             {isTranslating ? (
               <Loader
@@ -228,8 +241,8 @@ export default function Chat() {
           <Button
             size='sm'
             className='mr-2'
-            onClick={() => fetchAnalyse({ sentence: inputValue })}
-            disabled={isAnalyzing || !inputValue}
+            onClick={() => fetchAnalyse({ sentence: trimedInputValue })}
+            disabled={isAnalyzing || !trimedInputValue}
           >
             {isAnalyzing ? (
               <Loader
@@ -247,15 +260,20 @@ export default function Chat() {
           <Button
             size='sm'
             disabled={
-              isTranslating || isAnalyzing || !translationData || !grammarData
+              isTranslating ||
+              isAnalyzing ||
+              !trimedInputValue ||
+              !translationCachedData.get(trimedInputValue) ||
+              !grammarCachedData.get(trimedInputValue)
             }
             onClick={async () => {
               if (!selectedGroup) return toast.error('请选择一个组')
               try {
                 await createSentence({
-                  original: inputValue,
-                  translation: translationData,
-                  grammar: grammarData,
+                  original: trimedInputValue,
+                  translation:
+                    translationCachedData.get(trimedInputValue) || '',
+                  grammar: grammarCachedData.get(trimedInputValue),
                   groupId: selectedGroup.id
                 })
                 toast.success('添加到备忘录成功')
@@ -281,24 +299,28 @@ export default function Chat() {
         </div>
       </div>
 
-      {inputValue && (
+      {trimedInputValue && (
         <SentenceSection
           title='原文'
-          content={<div ref={selectableRef}>{inputValue}</div>}
+          content={<div ref={selectableRef}>{trimedInputValue}</div>}
         />
       )}
 
-      {translationData && (
+      {translationCachedData.get(trimedInputValue) && (
         <SentenceSection
           title='译文'
-          content={translationData}
+          content={translationCachedData.get(trimedInputValue)}
         />
       )}
 
-      {grammarData && (
+      {grammarCachedData.get(trimedInputValue) && (
         <SentenceSection
           title='语法分析'
-          content={<SentenceGrammar grammar={grammarData} />}
+          content={
+            <SentenceGrammar
+              grammar={grammarCachedData.get(trimedInputValue)}
+            />
+          }
         />
       )}
 
@@ -322,7 +344,7 @@ export default function Chat() {
           <WordParaphrase
             word={{
               wordOriginal: selectedText,
-              sentenceOriginal: inputValue
+              sentenceOriginal: trimedInputValue
             }}
           />
         </SheetContent>
