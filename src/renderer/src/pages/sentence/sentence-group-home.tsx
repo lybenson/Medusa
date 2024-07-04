@@ -34,6 +34,7 @@ import {
   AlertDialogTitle
 } from '@renderer/components/ui/alert-dialog'
 import { useGlobalStore } from '@renderer/store'
+import { toast } from 'sonner'
 
 export default function SentenceGroupHome() {
   const groups = useGlobalStore((state) => state.groups)
@@ -117,6 +118,10 @@ export default function SentenceGroupHome() {
                       variant='ghost'
                       className='p-0.5 h-fit'
                       onClick={() => {
+                        if (groups.length === 1) {
+                          toast.error('至少保留一个组')
+                          return
+                        }
                         toggleDeleteConfimDialog(true)
                       }}
                     >
