@@ -18,14 +18,15 @@ export default function SentenceList({
   group?: SentenceGroupsReturn
 }) {
   const now = dayjs()
+  console.log(now.format('YYYY-MM-DD HH:mm:ss'))
 
   const tabs = [
     {
       label: '今日新增',
       value: 'today',
       dateRange: {
-        start: now.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
-        end: now.endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        start: now.startOf('day').utc().format('YYYY-MM-DD HH:mm:ss'),
+        end: now.endOf('day').utc().format('YYYY-MM-DD HH:mm:ss')
       }
     },
     {
@@ -35,32 +36,37 @@ export default function SentenceList({
         start: now
           .subtract(1, 'day')
           .startOf('day')
+          .utc()
           .format('YYYY-MM-DD HH:mm:ss'),
-        end: now.subtract(1, 'day').endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        end: now
+          .subtract(1, 'day')
+          .endOf('day')
+          .utc()
+          .format('YYYY-MM-DD HH:mm:ss')
       }
     },
     {
       label: '最近三日',
       value: 'last3days',
       dateRange: {
-        start: now.subtract(3, 'day').format('YYYY-MM-DD HH:mm:ss'),
-        end: now.format('YYYY-MM-DD HH:mm:ss')
+        start: now.subtract(3, 'day').utc().format('YYYY-MM-DD HH:mm:ss'),
+        end: now.utc().format('YYYY-MM-DD HH:mm:ss')
       }
     },
     {
       label: '最近一周',
       value: 'last7days',
       dateRange: {
-        start: now.subtract(1, 'week').format('YYYY-MM-DD HH:mm:ss'),
-        end: now.format('YYYY-MM-DD HH:mm:ss')
+        start: now.subtract(1, 'week').utc().format('YYYY-MM-DD HH:mm:ss'),
+        end: now.utc().format('YYYY-MM-DD HH:mm:ss')
       }
     },
     {
       label: '最近一月',
       value: 'last30days',
       dateRange: {
-        start: now.subtract(1, 'month').format('YYYY-MM-DD HH:mm:ss'),
-        end: now.format('YYYY-MM-DD HH:mm:ss')
+        start: now.subtract(1, 'month').utc().format('YYYY-MM-DD HH:mm:ss'),
+        end: now.utc().format('YYYY-MM-DD HH:mm:ss')
       }
     },
     {
