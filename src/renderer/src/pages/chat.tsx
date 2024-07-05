@@ -89,8 +89,6 @@ export default function Chat() {
       const trimedSelectedText = selection.toString().trim()
 
       if (trimedSelectedText) {
-        console.log(`Selected text: ${trimedSelectedText}`)
-
         setSelectedText(
           trimedSelectedText.charAt(0).toLowerCase() +
             trimedSelectedText.slice(1)
@@ -189,7 +187,6 @@ export default function Chat() {
                         key={group.id}
                         value={group.name}
                         onSelect={(currentValue) => {
-                          console.log(currentValue)
                           const group = groups.find(
                             (group) => group.name === currentValue
                           )

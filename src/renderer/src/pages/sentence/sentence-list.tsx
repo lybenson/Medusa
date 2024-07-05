@@ -74,8 +74,6 @@ export default function SentenceList({
   const { data, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
     queryKey: ['sentenceList', group?.id, activeTab],
     queryFn: ({ pageParam }) => {
-      console.log(tabs.find((tab) => tab.value === activeTab)?.dateRange)
-
       return fetchSentencesByGroupAndDateRange(
         group?.id,
         tabs.find((tab) => tab.value === activeTab)?.dateRange,

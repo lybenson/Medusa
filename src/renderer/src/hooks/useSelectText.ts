@@ -26,8 +26,6 @@ export const useSelectText = (
       const trimedSelectedText = selection.toString().trim()
 
       if (trimedSelectedText) {
-        console.log(`Selected text: ${trimedSelectedText}`)
-
         setSelectedText(
           trimedSelectedText.charAt(0).toLowerCase() +
             trimedSelectedText.slice(1)

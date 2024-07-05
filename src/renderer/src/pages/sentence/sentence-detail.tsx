@@ -4,7 +4,7 @@ import {
   updateSentence
 } from '@renderer/database/sentence'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowLeft, CircleHelp, RotateCw } from 'lucide-react'
+import { ArrowLeft, CircleHelp, Eye, EyeOff, RotateCw } from 'lucide-react'
 import { useNavigate, useParams } from 'react-router-dom'
 import SentenceGrammar from './sentence-grammar'
 import SentenceSection from './sentence-section'
@@ -26,6 +26,7 @@ import SpeakButton from '@renderer/components/speak-button'
 import TextPopover from '@renderer/components/text-popover'
 import { useSelectText } from '@renderer/hooks/useSelectText'
 import Paragraph from '@renderer/components/paragraph'
+import Overspread from '@renderer/components/overspread'
 
 export default function SentenceDetail() {
   const { id } = useParams()
@@ -116,6 +117,8 @@ export default function SentenceDetail() {
     }
   }, [selectedText])
 
+  const [hiddenOriginText, setHiddenOriginText] = useState(false)
+
   return (
     <div className='h-full p-1'>
       <Button
@@ -132,6 +135,23 @@ export default function SentenceDetail() {
             title={
               <div className='flex items-center gap-x-3'>
                 <span>原文</span>
+                <Button
+                  onClick={() => setHiddenOriginText((prev) => !prev)}
+                  variant='ghost'
+                  className='p-0 ml-1 hover:bg-transparent'
+                >
+                  {hiddenOriginText ? (
+                    <EyeOff
+                      size={16}
+                      className='ml-1'
+                    />
+                  ) : (
+                    <Eye
+                      size={16}
+                      className='ml-1'
+                    />
+                  )}
+                </Button>
                 <SpeakButton
                   variant='secondary'
                   size='sm'
@@ -143,10 +163,12 @@ export default function SentenceDetail() {
               </div>
             }
             content={
-              <Paragraph
-                ref={selectableRef}
-                literal={sentence.original || ''}
-              />
+              <Overspread hidden={hiddenOriginText}>
+                <Paragraph
+                  ref={selectableRef}
+                  literal={sentence.original || ''}
+                />
+              </Overspread>
             }
           />
 
