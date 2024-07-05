@@ -75,7 +75,7 @@ export default function SentenceGroupHome() {
     }
   }
   return (
-    <div className='flex h-full p-1'>
+    <div className='flex h-[calc(100vh-3.5rem)] p-1'>
       <div className='max-w-40 flex flex-col gap-y-1 max-h-full overflow-scroll'>
         {groups?.map((group) => (
           <Button
@@ -149,7 +149,7 @@ export default function SentenceGroupHome() {
           <span className='text-sm'>New Group</span>
         </Button>
       </div>
-      <div className='flex-1 max-h-full first-line:overflow-scroll px-4'>
+      <div className='flex-1 max-h-full overflow-scroll px-4 pb-8'>
         <SentenceList group={selectedGroup} />
       </div>
 

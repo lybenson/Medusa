@@ -99,26 +99,28 @@ export default function SentenceList({
 
   return (
     <div>
-      <h1 className='scroll-m-20 text-4xl font-bold tracking-tight'>
-        {group?.name}
-      </h1>
+      <div className='sticky top-0 bg-white pb-2'>
+        <h1 className='scroll-m-20 text-4xl font-bold tracking-tight '>
+          {group?.name}
+        </h1>
 
-      <Tabs
-        className='mt-4'
-        defaultValue={activeTab}
-        onValueChange={(value) => setActiveTab(value)}
-      >
-        <TabsList className='grid w-full grid-cols-6'>
-          {tabs.map((tab) => (
-            <TabsTrigger
-              key={tab.label}
-              value={tab.value}
-            >
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+        <Tabs
+          className='mt-4'
+          defaultValue={activeTab}
+          onValueChange={(value) => setActiveTab(value)}
+        >
+          <TabsList className='grid w-full grid-cols-6'>
+            {tabs.map((tab) => (
+              <TabsTrigger
+                key={tab.label}
+                value={tab.value}
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
 
       <div className='flex flex-col gap-y-3 mt-4'>
         {sentenceList?.map((sentence) => (
