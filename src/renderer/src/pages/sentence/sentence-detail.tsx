@@ -25,6 +25,7 @@ import WordParaphrase from '@renderer/pages/word/word-paraphrase'
 import SpeakButton from '@renderer/components/speak-button'
 import TextPopover from '@renderer/components/text-popover'
 import { useSelectText } from '@renderer/hooks/useSelectText'
+import Paragraph from '@renderer/components/paragraph'
 
 export default function SentenceDetail() {
   const { id } = useParams()
@@ -141,7 +142,12 @@ export default function SentenceDetail() {
                 </SpeakButton>
               </div>
             }
-            content={<div ref={selectableRef}>{sentence.original || ''}</div>}
+            content={
+              <Paragraph
+                ref={selectableRef}
+                literal={sentence.original || ''}
+              />
+            }
           />
 
           <SentenceSection
@@ -219,7 +225,11 @@ export default function SentenceDetail() {
                 </Button>
               </div>
             }
-            content={translationData || sentence.translation || ''}
+            content={
+              <Paragraph
+                literal={translationData || sentence.translation || ''}
+              />
+            }
           />
           {sentence.words.length > 0 && (
             <SentenceSection

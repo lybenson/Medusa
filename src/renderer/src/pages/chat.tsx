@@ -36,6 +36,7 @@ import {
 import { useGlobalStore } from '@renderer/store'
 import { cn } from '@renderer/lib/utils'
 import { SentenceGroupsReturn } from '@schema'
+import Paragraph from '@renderer/components/paragraph'
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState('')
@@ -298,18 +299,27 @@ export default function Chat() {
           </Button>
         </div>
       </div>
-
+      {/* <div ref={selectableRef}>{trimedInputValue}</div> */}
       {trimedInputValue && (
         <SentenceSection
           title='原文'
-          content={<div ref={selectableRef}>{trimedInputValue}</div>}
+          content={
+            <Paragraph
+              literal={trimedInputValue}
+              ref={selectableRef}
+            ></Paragraph>
+          }
         />
       )}
 
       {translationCachedData.get(trimedInputValue) && (
         <SentenceSection
           title='译文'
-          content={translationCachedData.get(trimedInputValue)}
+          content={
+            <Paragraph
+              literal={translationCachedData.get(trimedInputValue) || ''}
+            ></Paragraph>
+          }
         />
       )}
 

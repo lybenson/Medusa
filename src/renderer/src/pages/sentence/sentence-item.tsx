@@ -1,3 +1,4 @@
+import Paragraph from '@renderer/components/paragraph'
 import SpeakButton from '@renderer/components/speak-button'
 import { Button } from '@renderer/components/ui/button'
 import {
@@ -37,9 +38,11 @@ export default function SentenceItem({
       }}
     >
       <div className={sentence.learned ? 'line-through italic' : ''}>
-        {sentence.original}
+        <Paragraph literal={sentence.original}></Paragraph>
       </div>
-      <div className=' mt-2 text-sm text-gray-600'>{sentence.translation}</div>
+      <div className=' mt-2 text-sm text-gray-600'>
+        <Paragraph literal={sentence.translation}></Paragraph>
+      </div>
       <div className='flex justify-between items-center mt-4'>
         <div className='max-w-[80%]'>
           <WordTags

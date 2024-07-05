@@ -1,7 +1,7 @@
 import { marked } from 'marked'
-import { useEffect, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 
-export default function Paragraph({ literal }: { literal: string }) {
+function Paragraph({ literal }: { literal: string }, ref: any) {
   const [parsedData, setParsedData] = useState('')
   useEffect(() => {
     setParsedData(marked(literal || '').toString())
@@ -13,6 +13,8 @@ export default function Paragraph({ literal }: { literal: string }) {
       dangerouslySetInnerHTML={{
         __html: parsedData
       }}
+      ref={ref}
     />
   )
 }
+export default forwardRef(Paragraph)

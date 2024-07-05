@@ -2,7 +2,7 @@ import {
   SQLiteInsertValue,
   SQLiteUpdateSetSource
 } from 'drizzle-orm/sqlite-core'
-import { and, desc, eq, ne, SQL } from 'drizzle-orm'
+import { and, desc, eq, gte, lte, ne, SQL } from 'drizzle-orm'
 import { SentencesTable } from '@schema'
 import { db } from '.'
 import { PER_PAGE } from '@renderer/constants'
@@ -37,6 +37,42 @@ export const fetchSentencesByGroup = (
       ne(SentencesTable.deleted, true),
       eq(SentencesTable.groupId, groupId)
     )
+  })
+}
+
+export const fetchSentencesByGroupAndDateRange = (
+  groupId,
+  dateRange:
+    | {
+        start: string
+        end: string
+      }
+    | null
+    | undefined,
+  limit = PER_PAGE,
+  offset = 0
+) => {
+  let where = and(
+    ne(SentencesTable.deleted, true),
+    eq(SentencesTable.groupId, groupId)
+  )
+  if (dateRange) {
+    where = and(
+      ne(SentencesTable.deleted, true),
+      eq(SentencesTable.groupId, groupId),
+      gte(SentencesTable.createdAt, dateRange.start),
+      lte(SentencesTable.createdAt, dateRange.end)
+    )
+  }
+  return db.query.SentencesTable.findMany({
+    limit,
+    offset,
+    with: {
+      words: true,
+      group: true
+    },
+    orderBy: [desc(SentencesTable.updatedAt)],
+    where
   })
 }
 

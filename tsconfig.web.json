@@ -11,6 +11,8 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "composite": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
