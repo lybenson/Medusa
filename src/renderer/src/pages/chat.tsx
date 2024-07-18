@@ -261,8 +261,7 @@ export default function Chat() {
               isTranslating ||
               isAnalyzing ||
               !trimedInputValue ||
-              !translationCachedData.get(trimedInputValue) ||
-              !grammarCachedData.get(trimedInputValue)
+              !translationCachedData.get(trimedInputValue)
             }
             onClick={async () => {
               if (!selectedGroup) return toast.error('请选择一个组')
