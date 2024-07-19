@@ -342,9 +342,11 @@ export default function SentenceDetail() {
               </div>
             }
             content={
-              <SentenceGrammar
-                grammar={grammarData || sentence.grammar || ''}
-              />
+              (grammarData || sentence.grammar) && (
+                <SentenceGrammar
+                  grammar={grammarData || sentence.grammar || ''}
+                />
+              )
             }
           />
         </div>
