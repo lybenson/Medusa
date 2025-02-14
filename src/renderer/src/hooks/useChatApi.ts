@@ -56,6 +56,7 @@ export const useChatApi = (action: Action) => {
       for await (const textPart of response.textStream) {
         console.log(textPart)
         received += textPart
+        setData(received)
 
         if (action === 'translate' || action === 'analyze') {
           setCachedData((prev) => {
@@ -65,7 +66,6 @@ export const useChatApi = (action: Action) => {
           })
         }
       }
-      setData(received)
       setIsFetching(false)
     } catch (error) {
       setIsFetching(false)

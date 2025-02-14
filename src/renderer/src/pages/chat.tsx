@@ -40,9 +40,7 @@ import { SentenceGroupsReturn } from '@schema'
 import Paragraph from '@renderer/components/paragraph'
 
 export default function Chat() {
-  const [inputValue, setInputValue] = useState(
-    'The AI SDK standardizes integrating artificial intelligence (AI) models across supported providers. This enables developers to focus on building great AI applications, not waste time on technical details.'
-  )
+  const [inputValue, setInputValue] = useState('')
   const groups = useGlobalStore((state) => state.groups)
 
   const [trimedInputValue, setTrimedInputValue] = useState('')
