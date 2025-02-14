@@ -72,6 +72,8 @@ export default function useTTS() {
       setIsSpeaking(false)
     }
     ws.onerror = () => {
+      console.log('tts error')
+
       setIsFetching(false)
       setIsSpeaking(false)
     }

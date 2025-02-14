@@ -6,7 +6,7 @@ The best way to learn English: Use OpenAI to learn English through sentences.
 
 - [VSCode](https://code.visualstudio.com/) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 
-## Technologies Used
+## Tech Stack
 
 - [electron-vite](https://electron-vite.org/)
 - [react](https://react.dev/)
@@ -20,6 +20,10 @@ The best way to learn English: Use OpenAI to learn English through sentences.
 - [zustand](https://github.com/pmndrs/zustand)
 - [lucide-react](https://lucide.dev)
 - [radash](https://radash-docs.vercel.app/docs/getting-started)
+
+## TTS
+
+If you want to use TTS, you need to set a proxy for Edge TTS to link "speech.platform.bing.com" if you are in mainland China.
 
 ## Local packaging
 
