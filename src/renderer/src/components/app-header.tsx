@@ -18,8 +18,13 @@ export default function AppHeader() {
     store.getItem('OpenAI_ApiKey') || ''
   )
 
+  const [claudeAIApiKey, setClaudeApiKey] = useState(
+    store.getItem('ClaudeAI_ApiKey') || ''
+  )
+
   const handleSave = () => {
     store.setItem('OpenAI_ApiKey', openAIApiKey)
+    store.setItem('ClaudeAI_ApiKey', claudeAIApiKey)
     setOpen(false)
   }
 
@@ -57,6 +62,18 @@ export default function AppHeader() {
               placeholder='Please input your openai api key'
               defaultValue={openAIApiKey}
               onChange={(e) => setOpenAIApiKey(e.target.value)}
+            />
+          </div>
+
+          <DrawerHeader>
+            <DrawerTitle>Claude Api Key</DrawerTitle>
+          </DrawerHeader>
+
+          <div className='mx-4'>
+            <Input
+              placeholder='Please input your openai api key'
+              defaultValue={claudeAIApiKey}
+              onChange={(e) => setClaudeApiKey(e.target.value)}
             />
           </div>
 

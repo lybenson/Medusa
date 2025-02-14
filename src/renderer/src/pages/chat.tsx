@@ -11,6 +11,7 @@ import {
   Loader,
   Star
 } from 'lucide-react'
+import { useChat } from '@ai-sdk/react'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import SentenceGrammar from './sentence/sentence-grammar'
@@ -39,7 +40,9 @@ import { SentenceGroupsReturn } from '@schema'
 import Paragraph from '@renderer/components/paragraph'
 
 export default function Chat() {
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState(
+    'The AI SDK standardizes integrating artificial intelligence (AI) models across supported providers. This enables developers to focus on building great AI applications, not waste time on technical details.'
+  )
   const groups = useGlobalStore((state) => state.groups)
 
   const [trimedInputValue, setTrimedInputValue] = useState('')
@@ -52,6 +55,8 @@ export default function Chat() {
     cachedData: translationCachedData,
     isFetching: isTranslating
   } = useChatApi('translate')
+
+  useChat({})
 
   const {
     fetchSSE: fetchAnalyse,

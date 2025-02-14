@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useSettings } from './useSettings'
-import { parseEventStream } from '@renderer/lib/utils'
-import { ENDPOINT, MODEL } from '@renderer/constants'
 import { type Action, actions, Message } from '@renderer/lib/promots'
 
 import { toast } from 'sonner'
+import { streamText } from 'ai'
+import { anthropic } from '@renderer/lib/ai-providers'
 
 export const useChatApi = (action: Action) => {
-  const { openAIApiKey } = useSettings()
+  const { claudeAIApiKey } = useSettings()
 
   const [data, setData] = useState('')
   const [isFetching, setIsFetching] = useState(false)
@@ -37,56 +37,35 @@ export const useChatApi = (action: Action) => {
     }
 
     // or return new Error(), not toast.error()
-    if (!openAIApiKey) {
-      toast.error('请设置 OpenAI API Key')
+    if (!claudeAIApiKey) {
+      toast.error('请设置 claude API Key')
       return
     }
     try {
       setIsFetching(true)
-      const response = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${openAIApiKey}`
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: messages,
-          stream: true
-        })
-      })
-      if (!response.body) return
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
 
-      let isDone = false
+      const response = await streamText({
+        model: anthropic('claude-3-5-sonnet-20240620'),
+        messages,
+        onError: (error) => {
+          console.log(error)
+        }
+      })
 
       let received = ''
+      for await (const textPart of response.textStream) {
+        console.log(textPart)
+        received += textPart
 
-      while (!isDone) {
-        const { done, value } = await reader.read()
-        if (done) {
-          isDone = true
-          break
+        if (action === 'translate' || action === 'analyze') {
+          setCachedData((prev) => {
+            const newMap = new Map(prev)
+            newMap.set(sentence, received)
+            return newMap
+          })
         }
-        const jsonArray = parseEventStream(decoder.decode(value))
-
-        jsonArray.forEach((json: any) => {
-          if (!json.choices || json.choices.length === 0) return
-
-          received += json.choices[0].delta?.content || ''
-
-          setData(received)
-
-          if (action === 'translate' || action === 'analyze') {
-            setCachedData((prev) => {
-              const newMap = new Map(prev)
-              newMap.set(sentence, received)
-              return newMap
-            })
-          }
-        })
       }
+      setData(received)
       setIsFetching(false)
     } catch (error) {
       setIsFetching(false)
